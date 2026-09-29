@@ -24,7 +24,9 @@ table{width:100%;border-collapse:collapse;table-layout:auto}
 thead th{position:sticky;top:0;background:var(--purple);color:#fff;font-weight:bold;text-align:center;padding:6px 5px;border-right:1px solid rgba(255,255,255,.15);white-space:nowrap;cursor:pointer;user-select:none}
 thead th:first-child{cursor:default}
 thead th:nth-child(2){text-align:left}
-thead th.sort-asc::after{content:" ▲";font-size:9px}thead th.sort-desc::after{content:" ▼";font-size:9px}
+thead th.sort-asc::after{content:" ▲";font-size:9px}
+#garageTable thead th[data-garage-sort]{cursor:pointer;user-select:none}
+#garageTable thead th[data-garage-sort]:hover{background:#e9e3ea}thead th.sort-desc::after{content:" ▼";font-size:9px}
 thead th.sort-desc::after{content:" ▼";font-size:9px}
 tbody tr{border-bottom:1px solid #bbb}
 tbody tr:nth-child(even){background:var(--row)}
@@ -42,7 +44,7 @@ td.value{width:105px;text-align:right;white-space:nowrap}
 .rarity{display:inline-block;padding:1px 5px;color:#fff;font-size:10px;line-height:14px;font-weight:bold;white-space:nowrap}
 .common{background:#7acb49}.rare{background:#2dcdf9}.epic{background:#d247ed}.forza-edition{background:linear-gradient(90deg,#7a24d8 0%,#d122bd 100%);color:#fff}.legendary{background:#fea71d}.barn-find{background:#f3b34a}.treasure-car{background:#f0aa43}
 .stat{width:42px;font-size:13px}
-.pi{width:58px;white-space:nowrap}
+.pi{display:inline-flex;align-items:stretch;flex:0 0 58px;width:58px;white-space:nowrap}
 .pi-class{display:inline-block;color:#fff;font-weight:bold;font-size:12px;line-height:18px;padding:0 5px}
 .pi-num{display:inline-block;background:#fff;color:var(--purple2);border:1px solid currentColor;font-weight:bold;font-size:12px;line-height:16px;padding:0 3px}.pi-entry{display:inline-flex;align-items:center;gap:0;width:max-content}.pi-entry .pi-entry-num{width:44px;box-sizing:border-box;border:1px solid var(--purple2);border-radius:0 3px 3px 0;background:#fff;color:var(--purple2);font-weight:bold;font-size:12px;line-height:18px;height:20px;padding:0 4px;text-align:center;outline:none}.pi-entry .pi-entry-class{border-radius:3px 0 0 3px;min-width:26px;box-sizing:border-box;text-align:center;height:20px;line-height:18px}.pi-entry-num:focus{box-shadow:0 0 0 2px rgba(63,35,65,.15)}
 .pi-class.d{background:#3dbaea;border-color:#3dbaea}.pi-class.c{background:#f6bf31;border-color:#f6bf31}.pi-class.b{background:#ff6533;border-color:#ff6533}.pi-class.a{background:#fc355a;border-color:#fc355a}.pi-class.s1{background:#bd5ee4;border-color:#bd5ee4}.pi-class.s2{background:#1567d6;border-color:#1567d6}.pi-class.x{background:#20a83a;border-color:#20a83a}
@@ -63,7 +65,7 @@ thead th{top:0}
 .small-btn:hover{background:#e9e9e9}.reset-btn{background:#d62828;color:#fff;border-color:#b71c1c;font-weight:800}.reset-btn:hover{background:#b71c1c;color:#fff}.primary-btn{background:var(--purple);border-color:var(--purple);color:#fff}.primary-btn:hover{background:#3d0050}.sale-split{display:inline-flex;gap:5px;flex-wrap:wrap;white-space:nowrap}.sale-buyout,.sale-bid{display:inline-block;padding:2px 5px;border-radius:4px;font-size:11px;font-weight:600}.sale-buyout{background:#e8f5e9;color:#267a2b}.sale-bid{background:#eee;color:#555}
 .file-btn{display:inline-block}.tabs{display:flex;gap:4px;padding:10px 0 5px}.tab{border:0;background:#eee;color:#444;padding:9px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-weight:bold}.tab.active{background:var(--purple);color:#fff}.tab span{display:inline-block;min-width:20px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.2);font-size:11px;margin-left:4px}
 .tab-panel{display:none}.tab-panel.active{display:block}.section-head{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:12px 0}.section-head h2{margin:0 0 3px;color:var(--purple)}.section-head p{margin:0;color:#777;font-size:12px}.auction-tools{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.auction-tools input,.auction-tools select{height:38px;border:1px solid #bbb;border-radius:6px;padding:0 10px;font-size:14px}.auction-tools input{flex:1;min-width:220px}.auction-tools select{min-width:170px}.auction-view-tabs{display:flex;gap:4px;margin:0 0 8px}.auction-view-tab{border:1px solid #c9bdcc;background:#f4f0f5;color:#4b3650;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px}.auction-view-tab:hover{background:#ece3ef}.auction-view-tab.active{background:var(--purple);border-color:var(--purple);color:#fff}.auction-view-tab span{display:inline-block;min-width:18px;margin-left:4px;padding:1px 5px;border-radius:10px;background:rgba(0,0,0,.08);font-size:10px}.auction-view-tab.active span{background:rgba(255,255,255,.2)}
-#auctionTable{min-width:0;width:100%}.auction-row{cursor:pointer}.auction-row:hover{background:#ece3ef!important}.auction-date-group{background:#f1ebf3;color:#3f2341;font-weight:bold;cursor:pointer}.auction-date-group:hover{background:#e9e0eb}.auction-date-group td{padding:8px 10px;border-top:1px solid #d2c6d5;text-align:left}.auction-date-group .group-arrow{display:inline-block;width:16px;font-size:11px}.auction-date-group .group-label{font-weight:bold}.auction-date-group .group-count{font-weight:normal;color:#777;margin-left:6px;font-size:11px}.auction-month-group td{padding-left:26px}.auction-day-group td{padding-left:42px}.auction-row.group-hidden{display:none}.vehicle-cell{text-align:left!important;min-width:180px}.vehicle-cell strong{display:block}.vehicle-cell small,.summaryTable small{display:block;color:#777;font-size:11px;margin-top:2px}.source-cell{text-align:left!important;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.price-cell{white-space:nowrap}.price-cell.muted{color:#777}.win-cell{font-weight:bold;white-space:nowrap}.notes-cell{text-align:left!important;max-width:220px;white-space:normal}.icon-btn{border:0;background:transparent;cursor:pointer;font-size:16px;padding:3px 6px}.icon-btn:hover{background:#eee;border-radius:4px}.negative{color:#16803c;font-weight:bold}.empty-state{text-align:center;padding:30px;color:#777}.garage-table{width:100%;border-collapse:collapse}.garage-table th{background:#f1ebf3;color:#3f2341;padding:7px 8px;text-align:left;font-size:12px;white-space:nowrap}.garage-table td{padding:7px 8px;border-top:1px solid #ddd;font-size:12px}.garage-table td:nth-child(2) strong{display:block}.garage-table td:nth-child(2) small{display:block;color:#777;font-size:11px;margin-top:2px}.garage-table tr:hover{background:#f7f2f8}.garage-make-header{cursor:pointer;background:#f1eef2;font-weight:700}.garage-make-header:hover{background:#e9e3ea}.garage-make-header td{padding:9px 10px;border-bottom:1px solid #ddd}.garage-make-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.garage-make-arrow{display:inline-block;width:16px}.garage-make-stats{font-weight:400;color:#777;font-size:12px}.garage-child-row.is-hidden{display:none}.garage-value{white-space:nowrap;font-weight:bold}.garage-parts{white-space:nowrap}.auction-snapshot{margin:4px 0 12px;border:1px solid #d2c6d5;border-radius:7px;overflow:hidden}.auction-snapshot-header{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:#f1ebf3;color:#3f2341;padding:8px 10px;font-size:12px;font-weight:bold;cursor:pointer;text-align:left}.auction-snapshot-header:hover{background:#e9e0eb}.auction-snapshot-header .collapse-arrow{font-size:11px}.auction-snapshot.collapsed .collapse-arrow{transform:rotate(-90deg)}.auction-snapshot.collapsed .auction-snapshot-content{display:none}.auction-snapshot table{width:100%;border-collapse:collapse}.auction-snapshot th{background:#f1ebf3;color:#3f2341;padding:6px 8px;text-align:center;font-size:12px;white-space:nowrap}.auction-snapshot td{padding:6px 8px;border-top:1px solid #ddd;font-size:12px}.auction-snapshot td:first-child{text-align:left;font-weight:bold}.auction-snapshot .snapshot-price,.auction-snapshot .snapshot-average,.auction-snapshot .snapshot-high{font-weight:bold;white-space:nowrap}.auction-snapshot tr{cursor:pointer}.auction-snapshot tr:hover{background:#f7f2f8}.auction-caption{font-size:12px;color:#777;margin:0 0 6px}.click-hint{font-size:11px;color:#777;margin-left:5px}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0 16px}.stat-card{border:1px solid #ccc;border-radius:8px;padding:15px;background:#fafafa}.stat-card span{display:block;font-size:12px;color:#777}.stat-card strong{display:block;font-size:26px;color:var(--purple);margin-top:4px}.dashboard-note{border:1px solid #ddd;background:#f8f8f8;border-radius:8px;padding:14px;margin-bottom:16px}.dashboard-note h3{margin:0 0 8px;color:var(--purple)}.dashboard-note p{margin:5px 0;font-size:13px}.attribution-note{padding:12px 14px}.attribution-note summary{cursor:pointer;color:var(--purple);font-weight:700;font-size:13px}.attribution-note summary:hover{color:#3d0050}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-card{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:9px;box-shadow:0 10px 35px rgba(0,0,0,.3)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #ddd}.modal-head h2{margin:0;color:var(--purple);font-size:20px}.modal-close{border:0;background:transparent;font-size:28px;color:#666;cursor:pointer}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}.form-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444}.car-picker{display:flex;flex-direction:column;gap:5px}.car-picker select{min-height:38px}.car-picker select[aria-hidden="true"]{display:none}.car-picker input{width:100%}.car-search-wrap{position:relative;width:100%}.car-search-wrap input{width:100%;padding-right:62px!important}.car-count-badge{position:absolute;right:28px;top:50%;transform:translateY(-50%);min-width:30px;height:22px;padding:2px 6px;box-sizing:border-box;border:1px solid #c8c8c8;border-radius:4px;background:#eee;color:#666;font-size:11px;font-weight:700;line-height:16px;text-align:center;pointer-events:none;user-select:none}.vehicle-select-wrap{display:flex;flex-direction:column;justify-content:flex-end}.vehicle-select-wrap select{width:100%;min-height:38px;border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal}.form-grid input,.form-grid select,.form-grid textarea{border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal}.form-grid .full{grid-column:1/-1}.form-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 0;border-bottom:1px solid #ddd;margin-top:2px}.form-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 0;border-bottom:1px solid #ddd;margin-top:2px}.form-grid small{font-weight:normal;color:#777}#upgraded:disabled{opacity:1}select.upgrade-status-upgraded{background:#e8f6ea;border-color:#a8d5ae;color:#246b2d;font-weight:700}select.upgrade-status-downgraded{background:#fdeaea;border-color:#e0aaaa;color:#9a3030;font-weight:700}select.upgrade-status-stock{background:#f4f4f4;color:#555}select.upgrade-status-unknown{background:#fff;color:#777}.fh6-garage-target-col,.fh6-garage-car-type-col{display:table-cell}.garage-car-type{white-space:nowrap}.garage-modal-car-type{display:block;font-weight:600;color:#777}.garage-modal-car-type strong{color:#444}.garage-target{white-space:nowrap;font-weight:700}.garage-target-light{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:1px;border:1px solid rgba(0,0,0,.12)}.garage-target-light.pass{background:#36a853}.garage-target-light.under{background:#d93025}.garage-target-light.unknown{background:#aaa}.garage-target-pass{color:#287a35}.garage-target-under{color:#a33}.garage-target-unknown{color:#777}.garage-target-note{font-size:11px;color:#777}.garage-pi-status{display:inline-block;width:5px;height:18px;margin-left:5px;border-radius:1px;vertical-align:-4px;background:#aaa}.garage-pi-status.pass{background:#36a853}.garage-pi-status.under{background:#d93025}.garage-target-calc{margin-top:4px;font-size:12px;font-weight:700}.garage-target-calc.pass{color:#287a35}.garage-target-calc.under{color:#a33}.garage-target-calc.unknown{color:#777}.garage-section{grid-column:1/-1}.garage-details-section{padding-bottom:2px}.garage-details-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr);gap:12px}.garage-details-grid>label:first-child{grid-row:span 2}.garage-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 7px;border-bottom:1px solid #ddd;margin-bottom:10px}.garage-financial-section{border-top:1px solid #ddd;padding-top:11px}.garage-financial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.garage-pi-current{display:flex;align-items:center}.garage-pi-current .pi-entry{width:100%}.garage-pi-current .pi-entry-num{flex:0 0 44px;width:44px}.garage-pi-current .pi-entry-class{height:20px}.garage-pi-target{display:flex;align-items:center}.garage-pi-target .pi-entry{width:auto}.garage-pi-target .pi-entry-num{flex:0 0 44px;width:44px}.garage-pi-target .pi-entry-class{height:20px}@media(max-width:620px){.garage-details-grid,.garage-financial-grid{grid-template-columns:1fr}.garage-details-grid>label:first-child{grid-row:auto}}.garage-pi-group{grid-column:1/-1;border:1px solid #d2c6d5;border-radius:7px;background:#faf8fb;padding:12px}.garage-pi-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;margin-bottom:9px}.garage-pi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.garage-pi-field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444}.garage-pi-field small{font-weight:normal;color:#777}.garage-pi-static{min-height:38px;display:flex;align-items:center;padding:0 8px;border:1px solid #ddd;border-radius:5px;background:#f1f1f1;box-sizing:border-box}.garage-pi-status-text{grid-column:1/-1;font-size:12px;font-weight:700;padding-top:2px}.garage-pi-status-text.pass{color:#287a35}.garage-pi-status-text.under{color:#a33}.garage-pi-status-text.unknown{color:#777}.garage-pi-difference{grid-column:1/-1;font-size:12px;color:#666;padding-top:1px}.garage-pi-difference strong{color:#444}@media(max-width:620px){.garage-pi-grid{grid-template-columns:1fr}}
+#auctionTable{min-width:0;width:100%}.auction-row{cursor:pointer}.auction-row:hover{background:#ece3ef!important}.auction-date-group{background:#f1ebf3;color:#3f2341;font-weight:bold;cursor:pointer}.auction-date-group:hover{background:#e9e0eb}.auction-date-group td{padding:8px 10px;border-top:1px solid #d2c6d5;text-align:left}.auction-date-group .group-arrow{display:inline-block;width:16px;font-size:11px}.auction-date-group .group-label{font-weight:bold}.auction-date-group .group-count{font-weight:normal;color:#777;margin-left:6px;font-size:11px}.auction-month-group td{padding-left:26px}.auction-day-group td{padding-left:42px}.auction-row.group-hidden{display:none}.vehicle-cell{text-align:left!important;min-width:180px}.vehicle-cell strong{display:block}.vehicle-cell small,.summaryTable small{display:block;color:#777;font-size:11px;margin-top:2px}.source-cell{text-align:left!important;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.price-cell{white-space:nowrap}.price-cell.muted{color:#777}.win-cell{font-weight:bold;white-space:nowrap}.notes-cell{text-align:left!important;max-width:220px;white-space:normal}.icon-btn{border:0;background:transparent;cursor:pointer;font-size:16px;padding:3px 6px}.icon-btn:hover{background:#eee;border-radius:4px}.negative{color:#16803c;font-weight:bold}.empty-state{text-align:center;padding:30px;color:#777}.garage-table-wrap{overflow:visible}.garage-table{width:100%;border-collapse:collapse;table-layout:fixed}.garage-table th:nth-child(1),.garage-table td:nth-child(1){width:68px}.garage-table th:nth-child(2),.garage-table td:nth-child(2){width:150px}.garage-table th:nth-child(3),.garage-table td:nth-child(3){width:110px}.garage-table th:nth-child(4),.garage-table td:nth-child(4),.garage-table th:nth-child(5),.garage-table td:nth-child(5),.garage-table th:nth-child(6),.garage-table td:nth-child(6){width:65px;white-space:nowrap}.garage-table th:nth-child(7),.garage-table td:nth-child(7),.garage-table th:nth-child(8),.garage-table td:nth-child(8),.garage-table th:nth-child(9),.garage-table td:nth-child(9),.garage-table th:nth-child(10),.garage-table td:nth-child(10){width:95px;white-space:nowrap}.garage-table th:nth-child(11),.garage-table td:nth-child(11){width:125px;white-space:nowrap}.garage-table th:last-child,.garage-table td:last-child{width:60px;white-space:nowrap}.garage-table td:nth-child(2){overflow-wrap:anywhere}.garage-make-stats{white-space:nowrap}.garage-table th{background:#f1ebf3;color:#3f2341;padding:7px 8px;text-align:left;font-size:12px;white-space:nowrap}.garage-table td{padding:7px 8px;border-top:1px solid #ddd;font-size:12px}.garage-table td:nth-child(2) strong{display:block}.garage-table td:nth-child(2) small{display:block;color:#777;font-size:11px;margin-top:2px}.garage-table tr:hover{background:#f7f2f8}.garage-make-header{cursor:pointer;background:#f1eef2;font-weight:700}.garage-make-header:hover{background:#e9e3ea}.garage-make-header td{padding:9px 10px;border-bottom:1px solid #ddd}.garage-make-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.garage-make-arrow{display:inline-block;width:16px}.garage-make-stats{font-weight:400;color:#777;font-size:12px}.garage-child-row.is-hidden{display:none}.garage-value{white-space:nowrap;font-weight:bold}.garage-parts{white-space:nowrap}.auction-snapshot{margin:4px 0 12px;border:1px solid #d2c6d5;border-radius:7px;overflow:hidden}.auction-snapshot-header{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:#f1ebf3;color:#3f2341;padding:8px 10px;font-size:12px;font-weight:bold;cursor:pointer;text-align:left}.auction-snapshot-header:hover{background:#e9e0eb}.auction-snapshot-header .collapse-arrow{font-size:11px}.auction-snapshot.collapsed .collapse-arrow{transform:rotate(-90deg)}.auction-snapshot.collapsed .auction-snapshot-content{display:none}.auction-snapshot table{width:100%;border-collapse:collapse}.auction-snapshot th{background:#f1ebf3;color:#3f2341;padding:6px 8px;text-align:center;font-size:12px;white-space:nowrap}.auction-snapshot td{padding:6px 8px;border-top:1px solid #ddd;font-size:12px}.auction-snapshot td:first-child{text-align:left;font-weight:bold}.auction-snapshot .snapshot-price,.auction-snapshot .snapshot-average,.auction-snapshot .snapshot-high{font-weight:bold;white-space:nowrap}.auction-snapshot tr{cursor:pointer}.auction-snapshot tr:hover{background:#f7f2f8}.auction-caption{font-size:12px;color:#777;margin:0 0 6px}.click-hint{font-size:11px;color:#777;margin-left:5px}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0 16px}.stat-card{border:1px solid #ccc;border-radius:8px;padding:15px;background:#fafafa}.stat-card span{display:block;font-size:12px;color:#777}.stat-card strong{display:block;font-size:26px;color:var(--purple);margin-top:4px}.dashboard-note{border:1px solid #ddd;background:#f8f8f8;border-radius:8px;padding:14px;margin-bottom:16px}.dashboard-note h3{margin:0 0 8px;color:var(--purple)}.dashboard-note p{margin:5px 0;font-size:13px}.attribution-note{padding:12px 14px}.attribution-note summary{cursor:pointer;color:var(--purple);font-weight:700;font-size:13px}.attribution-note summary:hover{color:#3d0050}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-card{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:9px;box-shadow:0 10px 35px rgba(0,0,0,.3)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #ddd}.modal-head h2{margin:0;color:var(--purple);font-size:20px}.modal-close{border:0;background:transparent;font-size:28px;color:#666;cursor:pointer}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}.form-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444}.car-picker{display:flex;flex-direction:column;gap:5px}.car-picker select{min-height:38px}.car-picker select[aria-hidden="true"]{display:none}.car-picker input{width:100%}.car-search-wrap{position:relative;width:100%}.car-search-wrap input{width:100%;padding-right:62px!important}.car-count-badge{position:absolute;right:28px;top:50%;transform:translateY(-50%);min-width:30px;height:22px;padding:2px 6px;box-sizing:border-box;border:1px solid #c8c8c8;border-radius:4px;background:#eee;color:#666;font-size:11px;font-weight:700;line-height:16px;text-align:center;pointer-events:none;user-select:none}.vehicle-select-wrap{display:flex;flex-direction:column;justify-content:flex-end}.vehicle-select-wrap select{width:100%;min-height:38px;border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal}.form-grid input,.form-grid select,.form-grid textarea{border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal}.form-grid .full{grid-column:1/-1}.form-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 0;border-bottom:1px solid #ddd;margin-top:2px}.form-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 0;border-bottom:1px solid #ddd;margin-top:2px}.form-grid small{font-weight:normal;color:#777}#upgraded:disabled{opacity:1}select.upgrade-status-upgraded{background:#e8f6ea;border-color:#a8d5ae;color:#246b2d;font-weight:700}select.upgrade-status-downgraded{background:#fdeaea;border-color:#e0aaaa;color:#9a3030;font-weight:700}select.upgrade-status-stock{background:#f4f4f4;color:#555}select.upgrade-status-unknown{background:#fff;color:#777}.fh6-garage-target-col,.fh6-garage-car-type-col{display:table-cell}.garage-car-type{white-space:nowrap}.garage-modal-car-type{display:block;font-weight:600;color:#777}.garage-modal-car-type strong{color:#444}.garage-target{white-space:nowrap;font-weight:700}.garage-target-light{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:1px;border:1px solid rgba(0,0,0,.12)}.garage-target-light.pass{background:#36a853}.garage-target-light.under{background:#d93025}.garage-target-light.unknown{background:#aaa}.garage-target-pass{color:#287a35}.garage-target-under{color:#a33}.garage-target-unknown{color:#777}.garage-target-note{font-size:11px;color:#777}.garage-pi-status{display:inline-block;width:5px;height:18px;margin-left:5px;border-radius:1px;vertical-align:-4px;background:#aaa}.garage-pi-status.pass{background:#36a853}.garage-pi-status.under{background:#d93025}.garage-target-calc{margin-top:4px;font-size:12px;font-weight:700}.garage-target-calc.pass{color:#287a35}.garage-target-calc.under{color:#a33}.garage-target-calc.unknown{color:#777}.garage-section{grid-column:1/-1}.garage-details-section{padding-bottom:2px}.garage-details-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr);gap:12px}.garage-details-grid>label:first-child{grid-row:span 2}.garage-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 7px;border-bottom:1px solid #ddd;margin-bottom:10px}.garage-financial-section{border-top:1px solid #ddd;padding-top:11px}.garage-financial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.garage-pi-current{display:flex;align-items:center}.garage-pi-current .pi-entry{width:100%}.garage-pi-current .pi-entry-num{flex:0 0 44px;width:44px}.garage-pi-current .pi-entry-class{height:20px}.garage-pi-target{display:flex;align-items:center}.garage-pi-target .pi-entry{width:auto}.garage-pi-target .pi-entry-num{flex:0 0 44px;width:44px}.garage-pi-target .pi-entry-class{height:20px}@media(max-width:620px){.garage-details-grid,.garage-financial-grid{grid-template-columns:1fr}.garage-details-grid>label:first-child{grid-row:auto}}.garage-pi-group{grid-column:1/-1;border:1px solid #d2c6d5;border-radius:7px;background:#faf8fb;padding:12px}.garage-pi-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;margin-bottom:9px}.garage-pi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.garage-pi-field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444}.garage-pi-field small{font-weight:normal;color:#777}.garage-pi-static{min-height:38px;display:flex;align-items:center;padding:0 8px;border:1px solid #ddd;border-radius:5px;background:#f1f1f1;box-sizing:border-box}.garage-pi-status-text{grid-column:1/-1;font-size:12px;font-weight:700;padding-top:2px}.garage-pi-status-text.pass{color:#287a35}.garage-pi-status-text.under{color:#a33}.garage-pi-status-text.unknown{color:#777}.garage-pi-difference{grid-column:1/-1;font-size:12px;color:#666;padding-top:1px}.garage-pi-difference strong{color:#444}@media(max-width:620px){.garage-pi-grid{grid-template-columns:1fr}}
 .calculation-box{margin:0 16px;padding:10px;background:#f2edf4;border:1px solid #d8c7dc;border-radius:6px;color:#3f2341;font-size:13px}.auction-timer{font-weight:700;white-space:nowrap}.auction-status{display:flex;flex-direction:column;gap:2px}.auction-status small{font-weight:400;color:#777}.status-active{color:#555}.status-potential{color:#9a6700}.status-sold{color:#287a35}.status-expired{color:#a33}.buyout-auction{font-size:13px}
 .timer-box{grid-column:1/-1;border:1px solid #d8c7dc;background:#faf7fb;border-radius:7px;padding:10px}.timer-title{font-size:12px;font-weight:bold;color:#444;margin-bottom:7px}.timer-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.timer-presets button{border:1px solid #bbb;background:#fff;border-radius:5px;padding:6px 9px;cursor:pointer}.timer-presets button:hover{background:#eee}.timer-custom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.timer-custom label{font-size:11px;font-weight:bold;color:#555}.timer-custom input{width:100%;margin-top:4px}.timer-display{font-size:20px;font-weight:bold;color:var(--purple);margin-top:8px}.timer-note{font-size:11px;color:#777;margin-top:4px}.my-auction-row{cursor:pointer}.my-auction-row:hover{background:#ece3ef!important}.status-sold{font-weight:bold}.status-unsold{color:#a33;font-weight:bold}.status-active{color:#555}.timer-live{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:bold}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:16px}.car-edit-note{grid-column:1/-1;font-size:12px;color:#777;background:#f7f7f7;border:1px solid #ddd;border-radius:6px;padding:9px 10px}.car-id-display{font-family:monospace;color:#666;background:#f5f5f5}.edit-car-btn{white-space:nowrap}.unsortable{cursor:default!important}.search-panel{border-bottom:0}
 @media(max-width:700px){.app-header{align-items:flex-start;flex-direction:column}.db-actions{width:100%}.db-actions .small-btn{flex:1;text-align:center}.stats-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.section-head{align-items:flex-start;flex-direction:column}}
@@ -951,12 +953,13 @@ thead th{top:0}
 <div><h2>My Garage</h2><p>Record the values shown for cars you already own. These observations help estimate installed upgrade value for auction cars of the same model.</p></div>
 <button class="primary-btn" id="addGarage" type="button">+ Add Garage Car</button>
 </div>
-<div class="auction-tools">
+<div class="auction-tools garage-filter-tools">
 <input autocomplete="off" id="garageSearch" placeholder="Search garage cars..." type="search"/>
+<select id="garageCarTypeFilter" aria-label="Filter Garage by Car Type"><option value="">All Car Types</option></select>
 </div>
-<div class="table-wrap">
+<div class="table-wrap garage-table-wrap">
 <table class="garage-table" id="garageTable">
-<thead><tr><th>Date</th><th>Vehicle</th><th class="fh6-garage-car-type-col">Car Type</th><th>Stock</th><th>Current</th><th class="fh6-garage-target-col">Target PI</th><th>Autoshow Price</th><th>Purchased Price</th><th>Total Car Value</th><th>Parts Value</th><th>Appreciated Value</th><th></th></tr></thead>
+<thead><tr><th data-garage-sort="date">Date</th><th data-garage-sort="vehicle">Vehicle</th><th class="fh6-garage-car-type-col" data-garage-sort="carType">Car Type</th><th data-garage-sort="stockPi">Stock</th><th data-garage-sort="currentPi">Current</th><th class="fh6-garage-target-col" data-garage-sort="targetPi">Target PI</th><th data-garage-sort="autoshow">Autoshow</th><th data-garage-sort="purchased">Purchased</th><th data-garage-sort="total">Total Car Value</th><th data-garage-sort="parts">Parts Value</th><th data-garage-sort="appreciated">Appreciated Value</th><th></th></tr></thead>
 <tbody id="garageBody"></tbody>
 </table>
 </div>
@@ -1000,7 +1003,7 @@ thead th{top:0}
 <div class="modal-head"><h2>About Your Database</h2><button class="modal-close" id="closeAboutModal" type="button">×</button></div>
 <div style="padding:16px">
 <h3 style="margin:0 0 8px;color:var(--purple)">Forza Horizon Car Database</h3>
-<p style="margin:5px 0;font-size:13px;color:#444" id="aboutVersionInfo"><strong>v0.86.7 · Car DB v1.0 · 655 cars</strong></p>
+<p style="margin:5px 0;font-size:13px;color:#444" id="aboutVersionInfo"><strong>v0.86.23 · Car DB v1.0 · 655 cars</strong></p>
 <div class="dashboard-note" style="margin-top:14px">
 <h3>How your data is stored</h3>
 <p>This database stores your personal data locally in this browser using Chrome's IndexedDB storage. Your Garage, Auction Data, Checklist, My Auctions, and related information remain on this computer unless you back them up or import a database.</p>
@@ -1239,7 +1242,7 @@ const noResults=document.getElementById("noResults");
 const DB_NAME="FH4CarDatabase";
 const LEGACY_DB_NAME="FH4CarDatabaseV7";
 const ACTIVE_GAME_KEY="Forza_Horizon_Car_Database_activeGame";
-const APP_VERSION="v0.86.17";
+const APP_VERSION="v0.86.25";
 const DATABASE_CONFIGS={
     FH4:{game:"Forza Horizon 4",dbVersion:"1.0",globalName:"FH4_CAR_DATABASE",file:"FH4_Car_Data_v1_0.js",source:"https://forza.fandom.com/wiki/Forza_Horizon_4/Cars",sourceLabel:"Forza Wiki on Fandom — FH4 Cars",snapshot:"September 15, 2026"},
     FH6:{game:"Forza Horizon 6",dbVersion:"1.0",globalName:"FH6_CAR_DATABASE",file:"FH6_Car_Data_v1_0.js",source:"https://forza.fandom.com/wiki/Forza_Horizon_6/Cars",sourceLabel:"Forza Wiki on Fandom — FH6 Cars",snapshot:"September 26, 2026"}
@@ -1324,25 +1327,49 @@ input.addEventListener("input",applySearch);if(highlightInput)highlightInput.add
 function getActiveDatabaseConfig(){return DATABASE_CONFIGS[activeGame]||DATABASE_CONFIGS.FH4}
 function getStaticCars(){const cfg=getActiveDatabaseConfig();const data=window[cfg.globalName];return Array.isArray(data)?data:[]}
 function isCarActionable(c){return String(c?.availability||"").toLowerCase()!=="unobtainable"}
+function deleteStoreRecord(store,id){
+    return new Promise((resolve,reject)=>{
+        const r=tx(store,"readwrite").delete(id);
+        r.onsuccess=()=>resolve();
+        r.onerror=()=>reject(r.error);
+    });
+}
 async function syncStaticCars(){
     const staticCars=getStaticCars();
     if(!staticCars.length)return;
-    const existing=new Map(cars.map(c=>[c.id,c]));
-    let changed=false;
+    const staticIds=new Set(staticCars.map(c=>String(c.id)));
+    const existing=await getAll("cars");
+    const existingById=new Map(existing.map(c=>[String(c.id),c]));
+
+    // The cars store is authoritative for the currently active game only.
+    // Remove stale records from the other game's static dataset, while leaving
+    // the user's personal records in garage/auctions/myAuctions/checklist untouched.
+    for(const current of existing){
+        if(!staticIds.has(String(current.id))){
+            await deleteStoreRecord("cars",current.id);
+        }
+    }
+
+    // Add/update only records belonging to the active game's static dataset.
     for(const sc of staticCars){
-        const current=existing.get(sc.id);
-        if(!current){await put("cars",{...sc});changed=true;continue}
+        const current=existingById.get(String(sc.id));
+        if(!current){
+            await put("cars",{...sc});
+            continue;
+        }
         const merged={...current};
         for(const [key,value] of Object.entries(sc)){
-            if(key==="carType"&&activeGame==="FH6"){if(merged[key]!==value)merged[key]=value;continue}
+            if(key==="carType"&&activeGame==="FH6"){
+                if(merged[key]!==value)merged[key]=value;
+                continue;
+            }
             if(merged[key]===undefined||merged[key]===null||merged[key]==="")merged[key]=value;
         }
         // Normalize legacy FH6 static-data naming so all UI code can use autoshowValue.
         if(merged.autoshowValue==null&&merged.autoshow_value!=null)merged.autoshowValue=merged.autoshow_value;
-        if(JSON.stringify(merged)!==JSON.stringify(current)){await put("cars",merged);changed=true}
+        if(JSON.stringify(merged)!==JSON.stringify(current))await put("cars",merged);
     }
-    if(changed)cars=await getAll("cars");
-    if(!cars.length){cars=staticCars.map(c=>({...c}));for(const c of cars)await put("cars",c)}
+    cars=await getAll("cars");
 }
 function filterCarOptions(searchId,selectId,preserveCurrent=true){const search=document.getElementById(searchId),sel=document.getElementById(selectId);if(!search||!sel)return;const q=tokens(search.value),current=preserveCurrent?sel.value:"";const list=sortedCars().filter(c=>{const text=`${c.name||""} ${c.year||""}`.toLowerCase();return q.every(t=>text.includes(t))});sel.innerHTML=list.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} (${c.year}) — ${c.stockClass}${c.stockPi}</option>`).join("");if(preserveCurrent&&list.some(c=>c.id===current))sel.value=current;else if(list.length)sel.value=list[0].id;return list}
 function refreshAuctionCarFields(){const c=getCar(document.getElementById("auctionCar").value);document.getElementById("auctionPi").value=c?.stockPi??"";updateAuctionUpgradeStatus();updateLiveCalc()}
@@ -1677,7 +1704,7 @@ function updateGarageCarTypeDisplay(){
     const c=getCar(document.getElementById("garageCar")?.value);
     if(activeGame!=="FH6"){el.style.display="none";el.textContent="";return}
     el.style.display="block";
-    el.innerHTML=`Car Type: <strong>${escapeHtml(c?.carType||"—")}</strong>`;
+    el.innerHTML=`Car Type: <strong>${escapeHtml(garageCarType(c)||"—")}</strong>`;
 }
 function populateGarageCarSelect(){
     const search=document.getElementById("garageCarSearch");
@@ -1699,39 +1726,49 @@ function garagePiStatusMarkup(g,c){
     return `<span class="garage-pi-status ${current>=target?"pass":"under"}" title="${current>=target?"Current PI meets or exceeds target":"Current PI is below target"}"></span>`;
 }
 
+let garageSortKey="vehicle";
+let garageSortDir="asc";
+function garageStaticCar(c){
+    if(!c)return null;
+    if(activeGame!=="FH6")return c;
+    if(c.carType||c.car_type)return c;
+    const staticCars=window.FH6_CAR_DATABASE||[];
+    return staticCars.find(sc=>String(sc.id)===String(c.id))||c;
+}
+function garageCarType(c){const source=garageStaticCar(c);return source?.carType??source?.car_type??"";}
+function populateGarageCarTypeFilter(){
+    const select=document.getElementById("garageCarTypeFilter");
+    if(!select)return;
+    const current=select.value;
+    if(activeGame!=="FH6"){select.innerHTML=`<option value="">All Car Types</option>`;select.style.display="none";return;}
+    const types=[...new Set((window.FH6_CAR_DATABASE||[]).map(c=>c.carType??c.car_type).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:"base"}));
+    select.innerHTML=`<option value="">All Car Types</option>`+types.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+    select.value=types.includes(current)?current:"";select.style.display="";
+}
+function compareGarageValues(a,b,key){
+    const ca=garageStaticCar(getCar(a.carId))||{},cb=garageStaticCar(getCar(b.carId))||{};let av,bv;
+    if(key==="vehicle"){av=`${ca.name||""} ${ca.year||0}`;bv=`${cb.name||""} ${cb.year||0}`;}else if(key==="date"){av=String(a.date||"");bv=String(b.date||"");}else if(key==="carType"){av=garageCarType(ca);bv=garageCarType(cb);}else if(key==="stockPi"){av=Number(ca.stockPi??-1);bv=Number(cb.stockPi??-1);}else if(key==="currentPi"){av=Number(a.currentPi??-1);bv=Number(b.currentPi??-1);}else if(key==="targetPi"){av=Number(a.targetPi??-1);bv=Number(b.targetPi??-1);}else if(key==="autoshow"){av=Number(a.autoshowPrice??ca.autoshowValue??ca.autoshow_value??-1);bv=Number(b.autoshowPrice??cb.autoshowValue??cb.autoshow_value??-1);}else if(key==="purchased"){av=Number(a.purchasedPrice??-1);bv=Number(b.purchasedPrice??-1);}else if(key==="total"){av=Number(a.totalValue??-1);bv=Number(b.totalValue??-1);}else if(key==="parts"){av=Number(a.partsValue??-1);bv=Number(b.partsValue??-1);}else if(key==="appreciated"){av=Number(a.appreciationValue??-1);bv=Number(b.appreciationValue??-1);}
+    if(typeof av==="number"&&typeof bv==="number")return av-bv;return String(av).localeCompare(String(bv),undefined,{numeric:true,sensitivity:"base"});
+}
+function sortGarageTable(th){const key=th?.dataset?.garageSort;if(!key)return;if(garageSortKey===key)garageSortDir=garageSortDir==="asc"?"desc":"asc";else{garageSortKey=key;garageSortDir="asc";}renderGarage();}
+
 function renderGarage(){
-    const targetCols=document.querySelectorAll(".fh6-garage-target-col");targetCols.forEach(el=>el.style.display=activeGame==="FH6"?"table-cell":"none");const carTypeCols=document.querySelectorAll(".fh6-garage-car-type-col");carTypeCols.forEach(el=>el.style.display=activeGame==="FH6"?"table-cell":"none");
-    const body=document.getElementById("garageBody"),q=document.getElementById("garageSearch").value.toLowerCase().trim();
-    const filtered=garage.filter(g=>{const c=getCar(g.carId);return !q||`${c?.name||""} ${c?.year||""}`.toLowerCase().includes(q)});
-    const groups=new Map();
-    filtered.forEach(g=>{const c=getCar(g.carId)||{};const make=carMake(c)||"Unknown Manufacturer";if(!groups.has(make))groups.set(make,[]);groups.get(make).push(g)});
-    const makes=[...groups.keys()].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"}));
-    const rows=[];
-    makes.forEach(make=>{
-        const items=groups.get(make).sort((a,b)=>{const ca=getCar(a.carId)||{},cb=getCar(b.carId)||{};const byName=(ca.name||"").localeCompare(cb.name||"",undefined,{numeric:true,sensitivity:"base"});return byName||Number(ca.year||0)-Number(cb.year||0)||String(a.date||"").localeCompare(String(b.date||""))});
-        const expanded=expandedGarageMakes.has(make);
-        const groupRow=document.createElement("tr");
-        groupRow.className="garage-make-header";
-        groupRow.dataset.make=make;
-        groupRow.setAttribute("aria-expanded",String(expanded));
-        groupRow.innerHTML=`<td colspan="${activeGame==="FH6"?12:10}"><div class="garage-make-summary"><span class="garage-make-arrow">${expanded?"▼":"▶"}</span><span>${escapeHtml(make)}</span><span class="garage-make-stats">| ${items.length} Garage ${items.length===1?"Record":"Records"}</span></div></td>`;
-        rows.push(groupRow);
-        items.forEach(g=>{
-            const c=getCar(g.carId)||{};
-            const garageAutoshow=g.autoshowPrice??c.autoshowValue??c.autoshow_value??null;
-            const above=g.totalValue!=null&&garageAutoshow!=null?(Number(g.totalValue)+(Number(g.partsValue)||0))-Number(garageAutoshow):null;
-            const currentPi=g.currentPi??null;
-            const row=document.createElement("tr");
-            row.className=`garage-row garage-child-row${expanded?"":" is-hidden"}`;
-            row.dataset.id=g.id;
-            row.title="Click to view or edit garage details";
-            row.innerHTML=`<td>${escapeHtml(fmtDate(g.date))}</td><td><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""} · ${c.stockClass||""}${c.stockPi??"—"}</small></td><td class="fh6-garage-car-type-col"><span class="garage-car-type">${escapeHtml(c.carType||"—")}</span></td><td>${piMarkup(c.stockPi)}</td><td>${piMarkup(currentPi)}${garagePiStatusMarkup(g,c)}</td><td class="fh6-garage-target-col">${piMarkup(g.targetPi)}</td><td class="garage-value">${money(g.autoshowPrice??c.autoshowValue??c.autoshow_value)}</td><td class="garage-value">${money(g.purchasedPrice)}</td><td class="garage-value">${money(g.totalValue)}</td><td class="garage-parts">${money(g.partsValue)}</td><td class="garage-value">${money(g.appreciationValue)}</td><td><button class="icon-btn edit-garage" data-id="${g.id}" type="button" aria-label="View or edit garage car">✎</button><button class="icon-btn delete-garage" data-id="${g.id}" type="button" aria-label="Delete garage car">×</button></td>`;
-            rows.push(row);
-        });
-    });
-    body.replaceChildren(...rows);
-    document.getElementById("garageEmpty").style.display=filtered.length?"none":"block";
-    const garageBadge=document.getElementById("garageBadge");if(garageBadge)garageBadge.textContent=garage.length;
+    const targetCols=document.querySelectorAll(".fh6-garage-target-col");targetCols.forEach(el=>el.style.display=activeGame==="FH6"?"table-cell":"none");
+    const carTypeCols=document.querySelectorAll(".fh6-garage-car-type-col");carTypeCols.forEach(el=>el.style.display=activeGame==="FH6"?"table-cell":"none");
+    populateGarageCarTypeFilter();
+    const body=document.getElementById("garageBody"),q=document.getElementById("garageSearch").value.toLowerCase().trim(),typeFilter=document.getElementById("garageCarTypeFilter")?.value||"";
+    const filtered=garage.filter(g=>{const c=garageStaticCar(getCar(g.carId))||{};const text=`${c.name||""} ${c.year||""}`.toLowerCase();const type=garageCarType(c);return(!q||text.includes(q))&&(!typeFilter||type===typeFilter)});
+    const groups=new Map();filtered.forEach(g=>{const c=garageStaticCar(getCar(g.carId))||{};const make=carMake(c)||"Unknown Manufacturer";if(!groups.has(make))groups.set(make,[]);groups.get(make).push(g)});
+    const makes=[...groups.keys()].sort((a,b)=>{
+        if(garageSortKey==="vehicle")return a.localeCompare(b,undefined,{sensitivity:"base"});
+        const aItems=groups.get(a),bItems=groups.get(b);
+        const cmp=compareGarageValues(aItems[0],bItems[0],garageSortKey);
+        if(cmp)return garageSortDir==="desc"?-cmp:cmp;
+        return a.localeCompare(b,undefined,{sensitivity:"base"});
+    });const rows=[];
+    makes.forEach(make=>{const items=groups.get(make).sort((a,b)=>{const cmp=compareGarageValues(a,b,garageSortKey);if(cmp)return garageSortDir==="desc"?-cmp:cmp;return String(a.id||"").localeCompare(String(b.id||""),undefined,{numeric:true})});const expanded=expandedGarageMakes.has(make);const groupRow=document.createElement("tr");groupRow.className="garage-make-header";groupRow.dataset.make=make;groupRow.setAttribute("aria-expanded",String(expanded));groupRow.innerHTML=`<td colspan="${activeGame==="FH6"?12:10}"><div class="garage-make-summary"><span class="garage-make-arrow">${expanded?"▼":"▶"}</span><span>${escapeHtml(make)}</span><span class="garage-make-stats">| ${items.length} Garage ${items.length===1?"Record":"Records"}</span></div></td>`;rows.push(groupRow);items.forEach(g=>{const c=garageStaticCar(getCar(g.carId))||{};const garageAutoshow=g.autoshowPrice??c.autoshowValue??c.autoshow_value??null;const currentPi=g.currentPi??null;const row=document.createElement("tr");row.className=`garage-row garage-child-row${expanded?"":" is-hidden"}`;row.dataset.id=g.id;row.title="Click to view or edit garage details";row.innerHTML=`<td>${escapeHtml(fmtDate(g.date))}</td><td><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""} · ${c.stockClass||""}${c.stockPi??"—"}</small></td><td class="fh6-garage-car-type-col"><span class="garage-car-type">${escapeHtml(garageCarType(c)||"—")}</span></td><td>${piMarkup(c.stockPi)}</td><td>${piMarkup(currentPi)}${garagePiStatusMarkup(g,c)}</td><td class="fh6-garage-target-col">${piMarkup(g.targetPi)}</td><td class="garage-value">${money(garageAutoshow)}</td><td class="garage-value">${money(g.purchasedPrice)}</td><td class="garage-value">${money(g.totalValue)}</td><td class="garage-parts">${money(g.partsValue)}</td><td class="garage-value">${money(g.appreciationValue)}</td><td><button class="icon-btn edit-garage" data-id="${g.id}" type="button" aria-label="View or edit garage car">✎</button><button class="icon-btn delete-garage" data-id="${g.id}" type="button" aria-label="Delete garage car">×</button></td>`;rows.push(row)})});
+    body.replaceChildren(...rows);document.getElementById("garageEmpty").style.display=filtered.length?"none":"block";const garageBadge=document.getElementById("garageBadge");if(garageBadge)garageBadge.textContent=garage.length;
+    document.querySelectorAll("#garageTable thead th[data-garage-sort]").forEach(th=>{th.classList.toggle("sort-asc",th.dataset.garageSort===garageSortKey&&garageSortDir==="asc");th.classList.toggle("sort-desc",th.dataset.garageSort===garageSortKey&&garageSortDir==="desc")});
 }
 
 function openCarEditModal(car){
@@ -2005,7 +2042,7 @@ function numOrNull(id){const v=document.getElementById(id).value;return v===""?n
 function updateDashboard(){
     document.getElementById("dashCars").textContent=cars.length;document.getElementById("dashAuctions").textContent=auctions.length;document.getElementById("dashSold").textContent=auctions.filter(a=>a.winningBid!=null).length;document.getElementById("dashCovered").textContent=new Set(auctions.map(a=>a.carId)).size;const unknown=document.getElementById("dashUnknown");if(unknown)unknown.textContent=auctions.filter(a=>a.winningBid==null).length;
     const groups=new Map();auctions.forEach(a=>{if(a.winningBid==null)return;const c=getCar(a.carId);if(!c)return;if(!groups.has(a.carId))groups.set(a.carId,[]);groups.get(a.carId).push(a)});
-    const body=document.getElementById("summaryBody");body.innerHTML=[...groups.entries()].map(([id,list])=>{const c=getCar(id);const avg=list.reduce((s,a)=>s+a.winningBid,0)/list.length;const pis=list.filter(a=>a.auctionPi!=null);const avgPi=pis.length?pis.reduce((s,a)=>s+a.auctionPi,0)/pis.length:null;const avgDelta=pis.length?avgPi-c.stockPi:null;return `<tr><td><strong>${escapeHtml(c.name)}</strong><small>${c.year}</small></td><td class="garage-value">${money(g.autoshowPrice??c.autoshowValue)}</td><td>${list.length}</td><td>${money(Math.round(avg))}</td><td>${piMarkup(c.stockPi)}</td><td>${avgPi==null?"—":piMarkup(Math.round(avgPi))}</td><td>${avgDelta==null?"—":signed(Math.round(avgDelta))}</td></tr>`}).join("");
+    const body=document.getElementById("summaryBody");body.innerHTML=[...groups.entries()].map(([id,list])=>{const c=getCar(id);const avg=list.reduce((s,a)=>s+a.winningBid,0)/list.length;const pis=list.filter(a=>a.auctionPi!=null);const avgPi=pis.length?pis.reduce((s,a)=>s+a.auctionPi,0)/pis.length:null;const avgDelta=pis.length?avgPi-c.stockPi:null;return `<tr><td><strong>${escapeHtml(c.name)}</strong><small>${c.year}</small></td><td class="garage-value">${money(c.autoshowValue??c.autoshow_value)}</td><td>${list.length}</td><td>${money(Math.round(avg))}</td><td>${piMarkup(c.stockPi)}</td><td>${avgPi==null?"—":piMarkup(Math.round(avgPi))}</td><td>${avgDelta==null?"—":signed(Math.round(avgDelta))}</td></tr>`}).join("");
 }
 function checklistRecord(carId){return checklist.find(x=>String(x.carId)===String(carId))||null}
 function ownedState(carId){const rec=checklistRecord(carId);if(rec&&rec.ownedOverride!==null&&rec.ownedOverride!==undefined)return {owned:!!rec.ownedOverride,manual:true};return {owned:garageCountForCar(carId)>0,manual:false}}
@@ -2126,11 +2163,104 @@ document.getElementById("auctionBody").addEventListener("click",async e=>{
 document.getElementById("auctionSnapshotBody").addEventListener("click",e=>{const header=e.target.closest(".snapshot-make-header");if(header){const make=header.dataset.make;if(expandedSnapshotMakes.has(make))expandedSnapshotMakes.delete(make);else expandedSnapshotMakes.add(make);renderAuctions();return}const row=e.target.closest(".snapshot-row");if(!row)return;const c=getCar(row.dataset.carId);if(c){document.getElementById("auctionSearch").value=c.name;document.getElementById("auctionOutcome").value="";renderAuctions();document.getElementById("auctionTable").scrollIntoView({behavior:"smooth",block:"start"})}});
 document.getElementById("auctionModal").addEventListener("click",e=>{if(e.target.id==="auctionModal")closeModal()});document.getElementById("closeBuyoutModal").addEventListener("click",closeBuyoutModal);document.getElementById("cancelBuyout").addEventListener("click",closeBuyoutModal);document.getElementById("confirmBuyout").addEventListener("click",confirmBuyout);document.getElementById("buyoutModal").addEventListener("click",e=>{if(e.target.id==="buyoutModal")closeBuyoutModal()});
 document.getElementById("addMyAuction").addEventListener("click",()=>openMyAuctionModal());document.getElementById("closeMyAuctionModal").addEventListener("click",closeMyAuctionModal);document.getElementById("cancelMyAuction").addEventListener("click",closeMyAuctionModal);document.getElementById("myAuctionForm").addEventListener("submit",saveMyAuction);document.getElementById("myAuctionCarSearch").addEventListener("input",()=>{refreshCarComboList("myAuctionCarSearch","myAuctionCarList");selectCarFromCombo("myAuctionCarSearch","myAuctionCar","myAuctionCarList")});document.getElementById("myAuctionOutcome").addEventListener("change",()=>{if(["Sold","Buyout Sold","Did Not Sell"].includes(document.getElementById("myAuctionOutcome").value))setTimerInputs(0);updateMyAuctionTimerDisplay()});document.querySelectorAll(".timer-presets button").forEach(btn=>btn.addEventListener("click",()=>setTimerInputs(Number(btn.dataset.seconds))));["timerHours","timerMinutes","timerSeconds","myAuctionListedAt"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{updateMyAuctionTimerDisplay();const d=document.getElementById("myAuctionListedAt").value;if(document.getElementById("myAuctionRetentionReminder").checked&&d)updateRetentionDisplay(d)}));document.getElementById("myAuctionRetentionReminder").addEventListener("change",()=>{const d=document.getElementById("myAuctionListedAt").value;if(document.getElementById("myAuctionRetentionReminder").checked&&d)updateRetentionDisplay(d);else document.getElementById("retentionDisplay").textContent="No 60-day reminder set"});document.getElementById("myAuctionSearch").addEventListener("input",renderMyAuctions);document.getElementById("myAuctionStatus").addEventListener("change",renderMyAuctions);document.getElementById("myAuctionBody").addEventListener("click",async e=>{const del=e.target.closest(".delete-my-auction");if(del){e.stopPropagation();if(confirm("Delete this personal auction record?")){await new Promise((resolve,reject)=>{const r=tx("myAuctions","readwrite").delete(Number(del.dataset.id));r.onsuccess=resolve;r.onerror=()=>reject(r.error)});myAuctions=await getAll("myAuctions");renderMyAuctions()}return}const relist=e.target.closest(".relist-my-auction");if(relist){e.stopPropagation();await relistMyAuction(relist.dataset.id);return}const edit=e.target.closest(".edit-my-auction"),row=e.target.closest(".my-auction-row"),id=edit?.dataset.id||row?.dataset.id;if(id){const a=myAuctions.find(x=>String(x.id)===String(id));if(a)openMyAuctionModal(a)}});document.getElementById("myAuctionModal").addEventListener("click",e=>{if(e.target.id==="myAuctionModal")closeMyAuctionModal()});
-document.getElementById("addGarage").addEventListener("click",()=>openGarageModal());document.getElementById("closeGarageModal").addEventListener("click",closeGarageModal);document.getElementById("cancelGarage").addEventListener("click",closeGarageModal);document.getElementById("garageForm").addEventListener("submit",saveGarage);document.getElementById("garageCarSearch").addEventListener("input",()=>{filterCarOptions("garageCarSearch","garageCar");updateGarageCarTypeDisplay()});document.getElementById("garageCar").addEventListener("change",()=>{updateGarageCarTypeDisplay();updateGarageCalc()});document.getElementById("garageCurrentPi").addEventListener("input",()=>{updateGaragePiClass();updateGarageTargetStatus()});document.getElementById("garageTargetPi").addEventListener("input",updateGarageTargetStatus);["garagePurchased","garageTotal","garageParts","garageAppreciation"].forEach(id=>document.getElementById(id).addEventListener("input",updateGarageCalc));document.getElementById("garageSearch").addEventListener("input",renderGarage);document.getElementById("garageBody").addEventListener("click",e=>{const header=e.target.closest(".garage-make-header");if(!header)return;const make=header.dataset.make;if(expandedGarageMakes.has(make))expandedGarageMakes.delete(make);else expandedGarageMakes.add(make);renderGarage()});document.getElementById("garageBody").addEventListener("click",async e=>{const del=e.target.closest(".delete-garage");if(del){e.stopPropagation();if(confirm("Delete this garage record?")){const id=Number(del.dataset.id);await new Promise((resolve,reject)=>{const r=tx("garage","readwrite").delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)});garage=await getAll("garage");renderGarage();renderAuctions();}return}const edit=e.target.closest(".edit-garage"),row=e.target.closest(".garage-row"),id=edit?.dataset.id||row?.dataset.id;if(id){const g=garage.find(x=>String(x.id)===String(id));if(g)openGarageModal(g)}});document.getElementById("garageModal").addEventListener("click",e=>{if(e.target.id==="garageModal")closeGarageModal()});
+document.getElementById("addGarage").addEventListener("click",()=>openGarageModal());document.getElementById("closeGarageModal").addEventListener("click",closeGarageModal);document.getElementById("cancelGarage").addEventListener("click",closeGarageModal);document.getElementById("garageForm").addEventListener("submit",saveGarage);document.getElementById("garageCarSearch").addEventListener("input",()=>{filterCarOptions("garageCarSearch","garageCar");updateGarageCarTypeDisplay()});document.getElementById("garageCar").addEventListener("change",()=>{updateGarageCarTypeDisplay();updateGarageCalc()});document.getElementById("garageCurrentPi").addEventListener("input",()=>{updateGaragePiClass();updateGarageTargetStatus()});document.getElementById("garageTargetPi").addEventListener("input",updateGarageTargetStatus);["garagePurchased","garageTotal","garageParts","garageAppreciation"].forEach(id=>document.getElementById(id).addEventListener("input",updateGarageCalc));document.getElementById("garageSearch").addEventListener("input",renderGarage);document.getElementById("garageCarTypeFilter").addEventListener("change",renderGarage);document.querySelectorAll("#garageTable thead th[data-garage-sort]").forEach(th=>th.addEventListener("click",()=>sortGarageTable(th)));document.getElementById("garageBody").addEventListener("click",e=>{const header=e.target.closest(".garage-make-header");if(!header)return;const make=header.dataset.make;if(expandedGarageMakes.has(make))expandedGarageMakes.delete(make);else expandedGarageMakes.add(make);renderGarage()});document.getElementById("garageBody").addEventListener("click",async e=>{const del=e.target.closest(".delete-garage");if(del){e.stopPropagation();if(confirm("Delete this garage record?")){const id=Number(del.dataset.id);await new Promise((resolve,reject)=>{const r=tx("garage","readwrite").delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)});garage=await getAll("garage");renderGarage();renderAuctions();}return}const edit=e.target.closest(".edit-garage"),row=e.target.closest(".garage-row"),id=edit?.dataset.id||row?.dataset.id;if(id){const g=garage.find(x=>String(x.id)===String(id));if(g)openGarageModal(g)}});document.getElementById("garageModal").addEventListener("click",e=>{if(e.target.id==="garageModal")closeGarageModal()});
 
 setInterval(async()=>{if(document.getElementById("myAuctionModal").classList.contains("show"))updateMyAuctionTimerDisplay();if(document.getElementById("auctionModal").classList.contains("show"))updateAuctionTimerDisplay();renderAuctions();await normalizeExpiredMyAuctions();renderMyAuctions()},1000);
+function showDatabaseRecovery(err,stage){
+    const el=document.getElementById("dbStatus");
+    if(!el)return;
+    const cfg=getActiveDatabaseConfig();
+    const name=err?.name||"UnknownError";
+    const message=err?.message||String(err||"Unknown database error");
+    const safe=escapeHtml(message);
+    const safeName=escapeHtml(name);
+    const safeStage=escapeHtml(stage||"startup");
+    el.innerHTML=`<span class="status-chip">Database error</span>
+    <span class="status-separator">·</span>
+    <span class="status-chip">${escapeHtml(cfg.game)}</span>
+    <div style="margin-top:8px;font-size:11px;color:#9a1f1f;line-height:1.45;white-space:normal">
+    <strong>${safeName}</strong> during ${safeStage}: ${safe}
+    </div>
+    <div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">
+    <button type="button" class="small-btn" id="recoverFH6">Start as FH6</button>
+    <button type="button" class="small-btn" id="recoverFH4">Start as FH4</button>
+    <button type="button" class="small-btn" id="repairCarStore">Repair Car Data</button>
+    <button type="button" class="small-btn" id="deleteAndStartFH6">Fresh FH6 Database</button>
+    </div>`;
+    const setGame=game=>{localStorage.setItem(ACTIVE_GAME_KEY,game);location.reload()};
+    document.getElementById("recoverFH6")?.addEventListener("click",()=>setGame("FH6"));
+    document.getElementById("recoverFH4")?.addEventListener("click",()=>setGame("FH4"));
+    document.getElementById("repairCarStore")?.addEventListener("click",async()=>{
+        const btn=document.getElementById("repairCarStore");
+        if(btn)btn.disabled=true;
+        try{
+            await ensureDb();
+            await clearStore("cars");
+            activeGame=localStorage.getItem(ACTIVE_GAME_KEY)||"FH6";
+            if(!DATABASE_CONFIGS[activeGame])activeGame="FH6";
+            localStorage.setItem(ACTIVE_GAME_KEY,activeGame);
+            const staticCars=getStaticCars();
+            if(!staticCars.length)throw new Error(`No static car data loaded for ${activeGame}.`);
+            for(const c of staticCars)await put("cars",{...c});
+            location.reload();
+        }catch(repairErr){
+            console.error("Car store repair failed:",repairErr);
+            showDatabaseRecovery(repairErr,"car-store repair");
+        }
+    });
+    document.getElementById("deleteAndStartFH6")?.addEventListener("click",async()=>{
+        if(!confirm("This will permanently delete the local database used by this app, including Garage, Auction Data, My Auctions, and Checklist. Continue with a fresh FH6 database?"))return;
+        const btn=document.getElementById("deleteAndStartFH6");
+        if(btn)btn.disabled=true;
+        try{
+            if(db){db.close();db=null}
+            await new Promise((resolve,reject)=>{
+                const req=indexedDB.deleteDatabase(DB_NAME);
+                req.onsuccess=resolve;
+                req.onerror=()=>reject(req.error);
+                req.onblocked=()=>reject(new Error("The database is still open in another tab or window. Close other copies of the app first."));
+            });
+            for(const key of Object.keys(localStorage))if(key.startsWith("FH4_Car_Database_"))localStorage.removeItem(key);
+            localStorage.setItem(ACTIVE_GAME_KEY,"FH6");
+            location.reload();
+        }catch(deleteErr){
+            console.error("Fresh FH6 reset failed:",deleteErr);
+            showDatabaseRecovery(deleteErr,"fresh FH6 reset");
+        }
+    });
+}
+
 (async function init(){
-    try{await openDb();await migrateLegacyDatabase();cars=await getAll("cars");await syncStaticCars();auctions=await getAll("auctions");garage=await getAll("garage");myAuctions=await getAll("myAuctions");checklist=await getAll("checklist");await normalizeChecklistPriorities();await normalizeExpiredMyAuctions();await migrateGarageValues();auctions=auctions.map(a=>{if(a.winningBid==null&&a.sold!=null){a.winningBid=a.sold;delete a.sold}if(a.outcome==="Bought at Buyout")a.outcome="Buyout Sold";return a});for(const a of auctions)await put("auctions",a);populateCarSelect();populateGarageCarSelect();populateMyAuctionCarSelect();renderCarTable();renderGarage();renderAuctions();renderMyAuctions();renderChecklist();updateDashboard();renderDbStatus();updateBackupStatus(localStorage.getItem("FH4_Car_Database_lastBackupAt"));setTimeout(()=>showAboutModal(false),150)}catch(err){console.error(err);document.getElementById("dbStatus").innerHTML=`<span class="status-chip">Database error</span>`}})();
+    let stage="opening database";
+    try{
+        await openDb();
+        stage="legacy migration";
+        await migrateLegacyDatabase();
+        stage="reading car data";
+        cars=await getAll("cars");
+        stage=`syncing ${activeGame} static car data`;
+        await syncStaticCars();
+        stage="reading personal records";
+        auctions=await getAll("auctions");
+        garage=await getAll("garage");
+        myAuctions=await getAll("myAuctions");
+        checklist=await getAll("checklist");
+        stage="normalizing checklist";
+        await normalizeChecklistPriorities();
+        stage="normalizing My Auctions";
+        await normalizeExpiredMyAuctions();
+        stage="migrating Garage values";
+        await migrateGarageValues();
+        stage="normalizing Auction Data";
+        auctions=auctions.map(a=>{if(a.winningBid==null&&a.sold!=null){a.winningBid=a.sold;delete a.sold}if(a.outcome==="Bought at Buyout")a.outcome="Buyout Sold";return a});
+        for(const a of auctions)await put("auctions",a);
+        stage="rendering application";
+        populateCarSelect();populateGarageCarSelect();populateMyAuctionCarSelect();renderCarTable();renderGarage();renderAuctions();renderMyAuctions();renderChecklist();updateDashboard();renderDbStatus();updateBackupStatus(localStorage.getItem("FH4_Car_Database_lastBackupAt"));setTimeout(()=>showAboutModal(false),150)
+    }catch(err){
+        console.error("Database startup failure:",stage,err);
+        showDatabaseRecovery(err,stage);
+    }
+})();
 })();
 </script>
 </body>
