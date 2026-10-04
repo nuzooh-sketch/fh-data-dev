@@ -1,0 +1,2406 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Forza Horizon Car Database</title>
+<style>
+*{box-sizing:border-box}
+:root{--purple:#280033;--purple2:#3f2341;--link:#0645ad;--border:#d0d0d0;--row:#f5f5f5;--text:#333}
+body{margin:0;padding:18px;background:#e5e5e5;color:var(--text);font-family:Arial,Helvetica,sans-serif;font-size:14px}
+.app{max-width:1200px;margin:0 auto;background:#fff;padding:10px;box-shadow:0 1px 8px rgba(0,0,0,.15)}
+.search-panel{position:sticky;top:0;z-index:10;background:#fff;padding:4px 0 10px}
+.search-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search-box{position:relative;flex:1 1 420px;min-width:260px}
+.search-box input{width:100%;height:42px;border:2px solid var(--purple);border-radius:6px;padding:0 42px 0 42px;font-size:16px;outline:none;background:#fff}
+.search-box input:focus{box-shadow:0 0 0 3px rgba(40,0,51,.12)}
+.search-icon{position:absolute;left:14px;top:10px;font-size:20px;color:var(--purple);pointer-events:none}
+.field-select{height:42px;border:2px solid #bbb;border-radius:6px;background:#fff;padding:0 10px;font-size:14px;cursor:pointer}
+.result-count{white-space:nowrap;font-size:13px;color:#555;margin-left:2px}
+.search-help{font-size:12px;color:#777;margin-top:5px}.highlight-box{position:relative;flex:0 1 260px;min-width:190px}.highlight-box input{width:100%;height:42px;border:2px solid #c9a227;border-radius:6px;padding:0 12px;font-size:14px;outline:none;background:#fffdf2;box-sizing:border-box}.highlight-box input:focus{box-shadow:0 0 0 3px rgba(201,162,39,.16)}.search-highlight{background:#fff4c2!important;box-shadow:inset 4px 0 0 #d1a900}.search-highlight:hover{background:#ffefaa!important}.highlight-help{font-size:11px;color:#8a741d;margin-top:5px}
+.table-wrap{overflow:auto;border:1px solid #bbb}
+table{width:100%;border-collapse:collapse;table-layout:auto}
+thead th{position:sticky;top:0;background:var(--purple);color:#fff;font-weight:bold;text-align:center;padding:6px 5px;border-right:1px solid rgba(255,255,255,.15);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:first-child{cursor:default}
+thead th:nth-child(2){text-align:left}
+thead th.sort-asc::after{content:" ▲";font-size:9px}
+#garageTable thead th[data-garage-sort]{cursor:pointer;user-select:none}
+#garageTable thead th[data-garage-sort]:hover{background:#e9e3ea}#garageTable thead th[data-garage-sort]:hover{background:#404040}thead th.sort-desc::after{content:" ▼";font-size:9px}
+#garageTable thead th[data-garage-sort]:hover{background:#404040}thead th.sort-desc::after{content:" ▼";font-size:9px}
+tbody tr{border-bottom:1px solid #bbb}
+tbody tr:nth-child(even){background:var(--row)}
+tbody tr:hover{background:#ece3ef}
+td{padding:4px 5px;vertical-align:middle;text-align:center}
+td.image{width:62px;padding:2px 4px}
+td.image img{display:block;width:57px;height:32px;object-fit:contain;margin:auto}
+td.vehicle{text-align:left;min-width:230px}
+.vehicle-name{font-size:14px;line-height:18px}
+.vehicle-name a{color:var(--link);text-decoration:none}
+.vehicle-name a:hover{text-decoration:underline}
+.vehicle-meta{font-size:12px;line-height:15px;color:#666}
+td.value{width:105px;text-align:right;white-space:nowrap}
+.value-amount{font-size:13px;line-height:18px}
+.rarity{display:inline-block;padding:1px 5px;color:#fff;font-size:10px;line-height:14px;font-weight:bold;white-space:nowrap}
+.common{background:#7acb49}.rare{background:#2dcdf9}.epic{background:#d247ed}.forza-edition{background:linear-gradient(90deg,#7a24d8 0%,#d122bd 100%);color:#fff}.legendary{background:#fea71d}.barn-find{background:#f3b34a}.treasure-car{background:#f0aa43}
+.stat{width:42px;font-size:13px}
+.pi{display:inline-flex;align-items:stretch;flex:0 0 58px;width:58px;white-space:nowrap}
+.pi-class{display:inline-block;color:#fff;font-weight:bold;font-size:12px;line-height:18px;padding:0 5px}
+.pi-num{display:inline-block;background:#fff;color:var(--purple2);border:1px solid currentColor;font-weight:bold;font-size:12px;line-height:16px;padding:0 3px}.pi-entry{display:inline-flex;align-items:center;gap:0;width:max-content}.pi-entry .pi-entry-num{width:44px;box-sizing:border-box;border:1px solid var(--purple2);border-radius:0 3px 3px 0;background:#fff;color:var(--purple2);font-weight:bold;font-size:12px;line-height:18px;height:20px;padding:0 4px;text-align:center;outline:none}.pi-entry .pi-entry-class{border-radius:3px 0 0 3px;min-width:26px;box-sizing:border-box;text-align:center;height:20px;line-height:18px}.pi-entry-num:focus{box-shadow:0 0 0 2px rgba(63,35,65,.15)}
+.pi-class.d{background:#3dbaea;border-color:#3dbaea}.pi-class.c{background:#f6bf31;border-color:#f6bf31}.pi-class.b{background:#ff6533;border-color:#ff6533}.pi-class.a{background:#fc355a;border-color:#fc355a}.pi-class.s1{background:#bd5ee4;border-color:#bd5ee4}.pi-class.s2{background:#1567d6;border-color:#1567d6}.pi-class.x{background:#20a83a;border-color:#20a83a}
+mark.search-hit{background:#ffe66d;color:inherit;padding:0 1px;border-radius:2px}
+.no-results{display:none;padding:25px;text-align:center;color:#666;font-size:15px}
+@media(max-width:700px){
+body{padding:6px}.app{padding:6px}
+thead th{top:0}
+.search-help{display:none}
+.vehicle{min-width:200px}
+}
+
+.app-header{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:8px 4px 12px;border-bottom:1px solid #ddd}
+.app-header h1{margin:0;font-size:24px;color:var(--purple)}.app-title{display:flex;align-items:center;gap:9px;line-height:1}.game-selector{display:inline-flex;align-items:center;gap:1px;height:48px;padding:2px 4px;border:1px solid #ddd;border-radius:8px;background:#f5f5f5;vertical-align:middle}.game-choice{appearance:none;border:0;background:transparent;color:#aaa;font-family:"Arial Black",Impact,Arial,sans-serif;font-size:39px;font-weight:900;font-style:italic;line-height:.82;letter-spacing:-4px;width:39px;height:42px;padding:0 5px 0 0;cursor:pointer;transform:skewX(-7deg);transition:color .15s,background .15s,opacity .15s;text-shadow:1px 1px 0 rgba(40,0,51,.05)}.game-choice:hover:not(:disabled){color:#777;background:#ececec;border-radius:5px}.game-choice.active{color:#d62a57;background:#fff;border-radius:5px;text-shadow:1px 1px 0 rgba(80,0,30,.08)}.game-choice.unavailable{color:#d0d0d0;cursor:default;opacity:.7}.game-choice:focus-visible{outline:2px solid #9b6aa8;outline-offset:1px}
+.version-label{font-size:11px;color:#888;margin-top:2px}.subtitle{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;font-size:12px;color:#777}.status-chip{display:inline-block;padding:2px 7px;border:1px solid #d6d6d6;border-radius:7px;background:#f4f4f4;color:#777;cursor:pointer;transition:background .15s,border-color .15s,color .15s;user-select:none}.status-chip:hover{background:#e9e1ec;border-color:#c8b6cc;color:#4b3650} .status-separator{color:#aaa}.db-info-grid{display:grid;grid-template-columns:145px minmax(0,1fr) 145px minmax(0,1fr);gap:0;border:1px solid #ddd;border-radius:7px;overflow:hidden;margin-top:10px}.db-info-grid div{padding:7px 9px;border-top:1px solid #eee;font-size:12px}.db-info-grid div:nth-child(-n+4){border-top:0}.db-info-grid .db-info-label{background:#f5f2f6;color:#555;font-weight:700}.db-info-grid .db-info-value{color:#333;word-break:break-word}.db-info-grid .db-info-span-3{grid-column:2 / 5}.db-info-note{margin-top:12px;font-size:12px;color:#666;background:#f8f8f8;border:1px solid #ddd;border-radius:6px;padding:9px 10px}.db-info-link{color:var(--purple);font-weight:600;text-decoration:none}.db-info-link:hover{text-decoration:underline} .switch-db-modal-card{overflow:hidden}.switch-db-modal-card .modal-head{padding:11px 16px}.switch-db-modal-card>div:nth-child(2){padding:12px!important}.switch-db-modal-card .db-info-grid{margin-top:8px}.switch-db-modal-card .db-info-grid div{padding:6px 8px}.switch-db-modal-card .db-info-note{margin-top:8px;padding:7px 9px}.switch-db-modal-card .dashboard-note{margin-top:8px!important;margin-bottom:6px!important;padding:7px 9px!important}.switch-db-modal-card .dashboard-note h3{margin-bottom:3px;font-size:13px}.switch-db-modal-card .dashboard-note p{margin:2px 0;font-size:12px}.switch-db-modal-card .modal-actions{padding:10px 16px}
+.db-switch-status{font-size:12px;color:#777;margin-top:6px}.db-actions-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:5px}.backup-status{cursor:default;font-size:11px;color:#777}.backup-status.backup-due{color:#c62828;font-weight:700}.db-actions{display:flex;gap:7px;align-items:center}
+.small-btn,.primary-btn,.secondary-btn{border:1px solid #bbb;border-radius:6px;background:#f5f5f5;color:#333;padding:9px 12px;font-size:13px;cursor:pointer}.section-actions{display:flex;align-items:center;gap:10px}
+.small-btn:hover{background:#e9e9e9}.backup-btn{background:#3b5f7a;color:#fff;border-color:#31516a}.backup-btn:hover{background:#476f8f;color:#fff}.reset-btn{background:#d62828;color:#fff;border-color:#b71c1c;font-weight:800}.reset-btn:hover{background:#b71c1c;color:#fff}.primary-btn{background:var(--purple);border-color:var(--purple);color:#fff}.primary-btn:hover{background:#3d0050}.sale-split{display:inline-flex;gap:5px;flex-wrap:wrap;white-space:nowrap}.sale-buyout,.sale-bid{display:inline-block;padding:2px 5px;border-radius:4px;font-size:11px;font-weight:600}.sale-buyout{background:#e8f5e9;color:#267a2b}.sale-bid{background:#eee;color:#555}
+.file-btn{display:inline-block}.tabs{display:flex;gap:4px;padding:10px 0 5px}.tab{border:0;background:#eee;color:#444;padding:9px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-weight:bold}.tab.active{background:var(--purple);color:#fff}.tab span{display:inline-block;min-width:20px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.2);font-size:11px;margin-left:4px}
+.tab-panel{display:none}.tab-panel.active{display:block}.section-head{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:12px 0}.section-head h2{margin:0 0 3px;color:var(--purple)}.section-head p{margin:0;color:#777;font-size:12px}.auction-tools{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.auction-tools input,.auction-tools select{height:38px;border:1px solid #bbb;border-radius:6px;padding:0 10px;font-size:14px}.auction-tools input{flex:1;min-width:220px}.auction-tools select{min-width:170px}.auction-view-tabs{display:flex;gap:4px;margin:0 0 8px}.auction-view-tab{border:1px solid #c9bdcc;background:#f4f0f5;color:#4b3650;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px}.auction-view-tab:hover{background:#ece3ef}.auction-view-tab.active{background:var(--purple);border-color:var(--purple);color:#fff}.auction-view-tab span{display:inline-block;min-width:18px;margin-left:4px;padding:1px 5px;border-radius:10px;background:rgba(0,0,0,.08);font-size:10px}.auction-view-tab.active span{background:rgba(255,255,255,.2)}
+#auctionTable{min-width:0;width:100%}.auction-row{cursor:pointer}.auction-row:hover{background:#ece3ef!important}.auction-date-group{background:#f1ebf3;color:#3f2341;font-weight:bold;cursor:pointer}.auction-date-group:hover{background:#e9e0eb}.auction-date-group td{padding:8px 10px;border-top:1px solid #d2c6d5;text-align:left}.auction-date-group .group-arrow{display:inline-block;width:16px;font-size:11px}.auction-date-group .group-label{font-weight:bold}.auction-date-group .group-count{font-weight:normal;color:#777;margin-left:6px;font-size:11px}.auction-month-group td{padding-left:26px}.auction-day-group td{padding-left:42px}.auction-row.group-hidden{display:none}.vehicle-cell{text-align:left!important;min-width:180px}.vehicle-cell strong{display:block}.vehicle-cell small,.summaryTable small{display:block;color:#777;font-size:11px;margin-top:2px}.source-cell{text-align:left!important;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.price-cell{white-space:nowrap}.price-cell.muted{color:#777}.win-cell{font-weight:bold;white-space:nowrap}.notes-cell{text-align:left!important;max-width:220px;white-space:normal}.icon-btn{border:0;background:transparent;cursor:pointer;font-size:16px;padding:3px 6px}.icon-btn:hover{background:#eee;border-radius:4px}.negative{color:#16803c;font-weight:bold}.empty-state{text-align:center;padding:30px;color:#777}.garage-table{width:100%;border-collapse:collapse;table-layout:auto}.garage-table th,.garage-table td{width:auto}.garage-table th:nth-child(2),.garage-table td:nth-child(2){width:170px}.garage-table th{white-space:normal;line-height:14px}.garage-table td{white-space:normal}.garage-table td:nth-child(2){overflow-wrap:anywhere}.garage-table td:nth-child(n+3){min-width:0}.garage-table th:not(:nth-child(2)),.garage-table td:not(:nth-child(2)){overflow:hidden}.garage-table .garage-value,.garage-table .garage-parts{white-space:nowrap}.garage-make-stats{white-space:nowrap}.garage-table th{background:var(--purple);color:#fff;padding:7px 8px;text-align:left;font-size:12px;white-space:nowrap}.garage-table td{padding:7px 8px;border-top:1px solid #ddd;font-size:12px}.garage-table td:nth-child(2) strong{display:block}.garage-table td:nth-child(2) small{display:block;color:#777;font-size:11px;margin-top:2px}.garage-make-header{cursor:pointer;background:#f1eef2;font-weight:700}.garage-make-header:hover{background:#e9e3ea}.garage-make-header td{padding:9px 10px;border-bottom:1px solid #ddd}.garage-make-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.garage-make-arrow{display:inline-block;width:16px}.garage-make-stats{font-weight:400;color:#777;font-size:12px}.garage-child-row.is-hidden{display:none}.garage-value{white-space:nowrap;font-weight:bold}.garage-parts{white-space:nowrap}.auction-snapshot{margin:4px 0 12px;border:1px solid #d2c6d5;border-radius:7px;overflow:hidden}.auction-snapshot-header{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:#f1ebf3;color:#3f2341;padding:8px 10px;font-size:12px;font-weight:bold;cursor:pointer;text-align:left}.auction-snapshot-header:hover{background:#e9e0eb}.auction-snapshot-header .collapse-arrow{font-size:11px}.auction-snapshot.collapsed .collapse-arrow{transform:rotate(-90deg)}.auction-snapshot.collapsed .auction-snapshot-content{display:none}.auction-snapshot table{width:100%;border-collapse:collapse}.auction-snapshot th{background:#f1ebf3;color:#3f2341;padding:6px 8px;text-align:center;font-size:12px;white-space:nowrap}.auction-snapshot td{padding:6px 8px;border-top:1px solid #ddd;font-size:12px}.auction-snapshot td:first-child{text-align:left;font-weight:bold}.auction-snapshot .snapshot-price,.auction-snapshot .snapshot-average,.auction-snapshot .snapshot-high{font-weight:bold;white-space:nowrap}.auction-snapshot tr{cursor:pointer}.auction-snapshot tr:hover{background:#f7f2f8}.auction-caption{font-size:12px;color:#777;margin:0 0 6px}.click-hint{font-size:11px;color:#777;margin-left:5px}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0 16px}.stat-card{border:1px solid #ccc;border-radius:8px;padding:15px;background:#fafafa}.stat-card span{display:block;font-size:12px;color:#777}.stat-card strong{display:block;font-size:26px;color:var(--purple);margin-top:4px}.dashboard-note{border:1px solid #ddd;background:#f8f8f8;border-radius:8px;padding:14px;margin-bottom:16px}.dashboard-note h3{margin:0 0 8px;color:var(--purple)}.dashboard-note p{margin:5px 0;font-size:13px}.attribution-note{padding:12px 14px}.attribution-note summary{cursor:pointer;color:var(--purple);font-weight:700;font-size:13px}.attribution-note summary:hover{color:#3d0050}.patch-notes-panel{padding:10px 12px}.patch-notes-panel>summary{padding:1px 0 8px}.patch-notes-groups{display:flex;flex-direction:column;gap:8px}.patch-group{border-top:1px solid #e2e2e2;padding-top:7px}.patch-group:first-child{border-top:0;padding-top:0}.patch-group-title{font-size:11px;font-weight:700;color:#777;margin-bottom:5px}.patch-version-grid{display:flex;flex-direction:column;gap:6px}.patch-version-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.patch-version{margin:0;border:1px solid #d6d6d6;border-radius:6px;background:#fafafa;overflow:hidden}.patch-version summary{cursor:pointer;list-style:none;padding:5px 8px;font-size:11px;font-weight:700;color:var(--purple);user-select:none}.patch-version summary::-webkit-details-marker{display:none}.patch-version summary::after{content:"＋";float:right;color:#999;font-size:12px}.patch-version[open] summary::after{content:"−"}.patch-version summary:hover{background:#f0ebf2}.patch-version.selected summary{background:#eee4f0;color:#4b075d;box-shadow:inset 0 -2px 0 var(--purple)}.patch-version>div{padding:7px 8px;border-top:1px solid #e3e3e3;font-size:11px;line-height:15px;color:#555;background:#fff}.patch-version ul{margin:0;padding-left:17px}.patch-version li{margin:2px 0}@media(max-width:700px){.patch-version-row{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:480px){.patch-version-row{grid-template-columns:1fr}}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-card{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:9px;box-shadow:0 10px 35px rgba(0,0,0,.3)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #ddd}.modal-head h2{margin:0;color:var(--purple);font-size:20px}.modal-close{border:0;background:transparent;font-size:28px;color:#666;cursor:pointer}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}.form-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444}.car-picker{display:flex;flex-direction:column;gap:5px}.car-picker select{min-height:38px}.car-picker select[aria-hidden="true"]{display:none}.car-picker input{width:100%}.car-search-wrap{position:relative;width:100%}.car-search-wrap input{width:100%;padding-right:62px!important}.car-count-badge{position:absolute;right:28px;top:50%;transform:translateY(-50%);min-width:30px;height:22px;padding:2px 6px;box-sizing:border-box;border:1px solid #c8c8c8;border-radius:4px;background:#eee;color:#666;font-size:11px;font-weight:700;line-height:16px;text-align:center;pointer-events:none;user-select:none}.vehicle-select-wrap{display:flex;flex-direction:column;justify-content:flex-end}.vehicle-select-wrap select{width:100%;min-height:38px;border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal}.form-grid input,.form-grid select,.form-grid textarea{border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal}.form-grid .full{grid-column:1/-1}.form-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 0;border-bottom:1px solid #ddd;margin-top:2px}.form-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 0;border-bottom:1px solid #ddd;margin-top:2px}.form-grid small{font-weight:normal;color:#777}#upgraded:disabled{opacity:1}select.upgrade-status-upgraded{background:#e8f6ea;border-color:#a8d5ae;color:#246b2d;font-weight:700}select.upgrade-status-downgraded{background:#fdeaea;border-color:#e0aaaa;color:#9a3030;font-weight:700}select.upgrade-status-stock{background:#f4f4f4;color:#555}select.upgrade-status-unknown{background:#fff;color:#777}.fh6-garage-target-col,.fh6-garage-car-type-col{display:table-cell}.garage-car-type{white-space:nowrap}.garage-modal-car-type{display:block;font-weight:600;color:#777}.garage-modal-car-type strong{color:#444}.garage-target{white-space:nowrap;font-weight:700}.garage-target-light{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:1px;border:1px solid rgba(0,0,0,.12)}.garage-target-light.pass{background:#36a853}.garage-target-light.under{background:#d93025}.garage-target-light.unknown{background:#aaa}.garage-target-pass{color:#287a35}.garage-target-under{color:#a33}.garage-target-unknown{color:#777}.garage-target-note{font-size:11px;color:#777}.garage-pi-status{display:inline-block;width:5px;height:18px;margin-left:5px;border-radius:1px;vertical-align:-4px;background:#aaa}.garage-pi-status.pass{background:#36a853}.garage-pi-status.under{background:#d93025}.garage-target-calc{margin-top:4px;font-size:12px;font-weight:700}.garage-target-calc.pass{color:#287a35}.garage-target-calc.under{color:#a33}.garage-target-calc.unknown{color:#777}.garage-section{grid-column:1/-1}.garage-details-section{padding-bottom:2px}.garage-details-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr);gap:12px}.garage-details-grid>label:first-child{grid-row:span 2}.garage-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;padding:3px 0 7px;border-bottom:1px solid #ddd;margin-bottom:10px}.garage-financial-section{border-top:1px solid #ddd;padding-top:11px}.garage-financial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.garage-pi-current{display:flex;align-items:center}.garage-pi-current .pi-entry{width:100%}.garage-pi-current .pi-entry-num{flex:0 0 44px;width:44px}.garage-pi-current .pi-entry-class{height:20px}.garage-pi-target{display:flex;align-items:center}.garage-pi-target .pi-entry{width:auto}.garage-pi-target .pi-entry-num{flex:0 0 44px;width:44px}.garage-pi-target .pi-entry-class{height:20px}@media(max-width:620px){.garage-details-grid,.garage-financial-grid{grid-template-columns:1fr}.garage-details-grid>label:first-child{grid-row:auto}}.garage-pi-group{grid-column:1/-1;border:1px solid #d2c6d5;border-radius:7px;background:#faf8fb;padding:12px}.garage-pi-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#777;margin-bottom:9px}.garage-pi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.garage-pi-field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444}.garage-pi-field small{font-weight:normal;color:#777}.garage-pi-static{min-height:38px;display:flex;align-items:center;padding:0 8px;border:1px solid #ddd;border-radius:5px;background:#f1f1f1;box-sizing:border-box}.garage-pi-status-text{grid-column:1/-1;font-size:12px;font-weight:700;padding-top:2px}.garage-pi-status-text.pass{color:#287a35}.garage-pi-status-text.under{color:#a33}.garage-pi-status-text.unknown{color:#777}.garage-pi-difference{grid-column:1/-1;font-size:12px;color:#666;padding-top:1px}.garage-pi-difference strong{color:#444}@media(max-width:620px){.garage-pi-grid{grid-template-columns:1fr}}
+.calculation-box{margin:0 16px;padding:10px;background:#f2edf4;border:1px solid #d8c7dc;border-radius:6px;color:#3f2341;font-size:13px}.auction-timer{font-weight:700;white-space:nowrap}.auction-status{display:flex;flex-direction:column;gap:2px}.auction-status small{font-weight:400;color:#777}.status-active{color:#555}.status-potential{color:#9a6700}.status-sold{color:#287a35}.status-expired{color:#a33}.buyout-auction{font-size:13px}
+.timer-box{grid-column:1/-1;border:1px solid #d8c7dc;background:#faf7fb;border-radius:7px;padding:10px}.timer-title{font-size:12px;font-weight:bold;color:#444;margin-bottom:7px}.timer-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.timer-presets button{border:1px solid #bbb;background:#fff;border-radius:5px;padding:6px 9px;cursor:pointer}.timer-presets button:hover{background:#eee}.timer-custom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.timer-custom label{font-size:11px;font-weight:bold;color:#555}.timer-custom input{width:100%;margin-top:4px}.timer-display{font-size:20px;font-weight:bold;color:var(--purple);margin-top:8px}.timer-note{font-size:11px;color:#777;margin-top:4px}.my-auction-row{cursor:pointer}.my-auction-row:hover{background:#ece3ef!important}.status-sold{font-weight:bold}.status-unsold{color:#a33;font-weight:bold}.status-active{color:#555}.timer-live{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:bold}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:16px}.car-edit-note{grid-column:1/-1;font-size:12px;color:#777;background:#f7f7f7;border:1px solid #ddd;border-radius:6px;padding:9px 10px}.car-id-display{font-family:monospace;color:#666;background:#f5f5f5}.edit-car-btn{white-space:nowrap}.unsortable{cursor:default!important}.search-panel{border-bottom:0}
+@media(max-width:700px){.app-header{align-items:flex-start;flex-direction:column}.db-actions{width:100%}.db-actions .small-btn{flex:1;text-align:center}.stats-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.section-head{align-items:flex-start;flex-direction:column}}
+
+/* v0.84 checklist */
+.snapshot-make-header{cursor:pointer;background:#f1eef2;font-weight:700}.snapshot-make-header:hover{background:#e9e3ea}.snapshot-make-header td{padding:9px 10px;border-bottom:1px solid #ddd}.snapshot-make-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.snapshot-make-arrow{display:inline-block;width:16px}.snapshot-make-stats{font-weight:400;color:#777;font-size:12px}.snapshot-child-row.is-hidden{display:none}
+.checklist-tools input{flex:1;min-width:220px}.checklist-tools select{min-width:220px}.checklist-help{margin:-3px 0 10px;color:#777;font-size:12px}.checklist-table{width:100%;border-collapse:collapse}.checklist-table th{background:#111;color:#fff;white-space:nowrap}.checklist-table td,.checklist-table th{padding:7px 8px;border-bottom:1px solid #ddd;text-align:center}.checklist-table td.vehicle-cell{text-align:left!important}.checklist-row:hover{background:#f6f2f7}.priority-input{width:90px;text-align:center}.check-toggle{width:18px;height:18px;vertical-align:middle}.owned-auto{font-weight:bold}.owned-manual{font-weight:bold}.owned-note{display:block;color:#888;font-size:10px;margin-top:2px}.checklist-image{width:60px;height:34px;object-fit:contain}.checklist-price{white-space:nowrap;font-weight:bold}
+
+.country-flag{display:inline-block;width:20px;height:13px;object-fit:cover;vertical-align:-2px;margin-left:5px;border:1px solid rgba(0,0,0,.15);border-radius:1px}.unobtainable-section td{padding:9px 10px;background:#eee7ef;color:#4b3650;font-weight:700;text-align:left;border-top:2px solid #c9bdcc;border-bottom:1px solid #d2c6d5}.unobtainable-section .section-count{font-weight:400;color:#777;margin-left:6px;font-size:11px}.unobtainable-row{background:#fafafa!important}.unobtainable-row:hover{background:#f1edf2!important}.availability-tag{display:inline-block;margin-left:5px;padding:1px 5px;border-radius:4px;background:#ececec;color:#777;font-size:10px;font-weight:700;white-space:nowrap}.availability-tag.unobtainable{background:#f1dddd;color:#963b3b}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="app-header">
+<div>
+<h1 class="app-title">Forza Horizon Car Database <span class="game-selector" id="gameSelector" aria-label="Game database selector"><button type="button" class="game-choice" data-game="FH4" aria-label="Forza Horizon 4">4</button><button type="button" class="game-choice" data-game="FH5" aria-label="Forza Horizon 5">5</button><button type="button" class="game-choice" data-game="FH6" aria-label="Forza Horizon 6">6</button></span></h1>
+<div class="subtitle" id="dbStatus" aria-label="Database version information"><button class="status-chip" type="button" data-status-part="app">v0.87.00</button><span class="status-separator">·</span><button class="status-chip" type="button" data-status-part="db">Car DB v1.0</button><span class="status-separator">·</span><button class="status-chip" type="button" data-status-part="cars">655 cars</button></div>
+</div>
+<div class="db-actions-wrap"><div class="backup-status" id="backupStatus">Last backup: Never</div><div class="db-actions">
+<button class="small-btn backup-btn" id="exportDb" type="button">backup</button>
+<label class="small-btn file-btn">import<input accept="application/json" hidden="" id="importDb" type="file"/></label>
+<button class="small-btn reset-btn" id="resetDb" type="button">RESET</button>
+</div></div>
+</div>
+<div class="tabs">
+<button class="tab active" data-tab="cars" type="button">Cars</button>
+<button class="tab" data-tab="auctions" type="button">Auction Data <span id="auctionBadge">0</span></button>
+<button class="tab" data-tab="myAuctions" type="button">My Auctions <span id="myAuctionBadge">0</span></button>
+<button class="tab" data-tab="garage" type="button">My Garage <span id="garageBadge">0</span></button>
+<button class="tab" data-tab="dashboard" type="button">Dashboard</button>
+<button class="tab" data-tab="checklist" type="button">Checklist <span id="checklistBadge">0</span></button></div>
+<div class="tab-panel active" id="tab-cars">
+<div class="search-panel">
+<div class="search-row">
+<div class="search-box">
+<span class="search-icon">⌕</span>
+<input autocomplete="off" id="carSearch" placeholder="Search cars... e.g. Acura NSX, 2017, S2, Legendary, Unobtainable" spellcheck="false" type="search"/>
+</div>
+<div class="highlight-box">
+<input autocomplete="off" id="carHighlight" placeholder="Highlight important cars..." spellcheck="false" type="search" aria-label="Highlight cars"/>
+</div>
+<select aria-label="Search field" class="field-select" id="searchField">
+<option value="all">All fields</option>
+<option value="vehicle">Vehicle</option>
+<option value="availability">Unlock Method</option>
+<option value="year">Year</option>
+<option value="value">Value</option>
+<option value="rarity">Rarity</option>
+<option value="performance">Performance / PI</option>
+</select>
+<div class="result-count" id="resultCount">Showing 753 of 753 cars</div>
+</div>
+<div class="search-help">Type normally to filter instantly. Up to 5 search terms can be used; all must match. Use Highlight to make matching rows stand out without filtering them out. Click a column heading to sort. FH5 and FH6 also show country flags and Offroad. Unobtainable vehicles remain in the master list but are excluded from actionable vehicle selectors.</div>
+</div>
+<div class="table-wrap">
+<table id="carTable">
+<thead><tr>
+<th>Image</th>
+<th data-sort="text" data-sort-key="vehicle">Vehicle</th>
+<th data-sort="number" data-sort-key="value">Value</th>
+<th data-sort="number" data-sort-key="speed">Sp</th>
+<th data-sort="number" data-sort-key="handling">Ha</th>
+<th data-sort="number" data-sort-key="acceleration">Ac</th>
+<th data-sort="number" data-sort-key="launch">La</th>
+<th data-sort="number" data-sort-key="braking">Br</th>
+<th data-sort="number" data-sort-key="offroad">Of</th>
+<th data-sort="number" data-sort-key="pi">PI</th>
+<th>Priority</th>
+<th>Need</th>
+<th>Owned</th>
+<th class="unsortable">Edit</th>
+</tr></thead>
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+<div class="no-results" id="noResults">No cars match your search.</div>
+</div>
+</div>
+<div class="tab-panel" id="tab-auctions">
+<div class="section-head">
+<div><h2>Auction Observations</h2><p>Record what you actually see. <strong>Highest Bid</strong> is the current bid; <strong>Winning Bid</strong> is the final price when you see the auction finish.</p></div>
+<div class="section-actions"><button class="secondary-btn" id="addGarageQuick" type="button">+ Add Garage Car</button><button class="primary-btn" id="addAuction" type="button">+ Add Auction Observation</button></div>
+</div>
+<div class="auction-tools">
+<input autocomplete="off" id="auctionSearch" placeholder="Search auction observations..." type="search"/>
+<select id="auctionOutcome"><option value="">All outcomes</option><option>Sold</option><option>Potentially Sold</option><option>Buyout Sold</option><option>Unsold / Expired</option><option>Auction Ended — Result Unknown</option><option>Active</option></select>
+</div>
+<div aria-label="Auction observation view" class="auction-view-tabs" role="tablist">
+<button aria-selected="true" class="auction-view-tab active" id="auctionViewLive" role="tab" type="button">Live <span id="auctionLiveCount">0</span></button>
+<button aria-selected="false" class="auction-view-tab" id="auctionViewCompleted" role="tab" type="button">Completed <span id="auctionCompletedCount">0</span></button>
+</div>
+<div class="auction-caption">Live auctions are sorted by time remaining, with the auction needing attention soonest at the top. Completed auctions remain available as reference. The market snapshot combines all observations for each unique vehicle.</div>
+<div class="auction-snapshot collapsed" id="auctionSnapshot">
+<button aria-expanded="false" class="auction-snapshot-header" id="auctionSnapshotHeader" type="button">
+<span>Market Snapshot <span style="font-weight:normal;color:#777">· winning-bid statistics exclude observations that finished at Buyout; Sold uses Winning Bid, or Highest Bid when no Winning Bid was entered</span></span>
+<span class="collapse-arrow">▼</span>
+</button>
+<div class="auction-snapshot-content">
+<table id="auctionSnapshotTable">
+<thead><tr><th data-snapshot-sort="vehicle">Vehicle</th><th data-snapshot-sort="source">Source</th><th data-snapshot-sort="autoshow">Autoshow</th><th data-snapshot-sort="low">Lowest - Winning Bid</th><th data-snapshot-sort="high">Highest - Winning Bid*</th><th data-snapshot-sort="buyout">Buyout</th><th data-snapshot-sort="sales">Sales</th><th data-snapshot-sort="garage">Garage</th></tr></thead>
+<tbody id="auctionSnapshotBody"></tbody>
+</table>
+</div>
+</div>
+<div class="table-wrap">
+<table id="auctionTable">
+<thead><tr><th>Date</th><th>Vehicle</th><th>Source</th><th>Start Bid</th><th>Highest Bid</th><th>Winning Bid</th><th>Buyout</th><th>Auction PI</th><th>Outcome</th><th></th></tr></thead>
+<tbody id="auctionBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="auctionEmpty">No auction observations yet. Add your first one above.</div>
+</div>
+<div class="tab-panel" id="tab-myAuctions">
+<div class="section-head">
+<div><h2>My Auctions</h2><p>Track cars you personally listed. Your database records are kept; the 60-day reminder below is only a reminder to retrieve or relist the in-game car before FH4 removes it.</p></div>
+<button class="primary-btn" id="addMyAuction" type="button">+ Add My Auction</button>
+</div>
+<div class="auction-tools">
+<input autocomplete="off" id="myAuctionSearch" placeholder="Search my auctions..." type="search"/>
+<select id="myAuctionStatus"><option value="Active">Active</option><option value="history">History — Sold / Expired / Did Not Sell</option><option value="">All statuses</option><option>Sold</option><option>Buyout Sold</option><option>Did Not Sell</option><option>Expired — Result Unknown</option></select>
+</div>
+<div class="table-wrap">
+<table id="myAuctionTable">
+<thead><tr><th>Listed</th><th>Vehicle</th><th>Start Bid</th><th>Highest Bid</th><th>Winning Bid</th><th>Buyout</th><th>Timer</th><th>Status</th><th></th></tr></thead>
+<tbody id="myAuctionBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="myAuctionEmpty">No personal auctions recorded yet.</div>
+</div>
+<div class="tab-panel" id="tab-garage">
+<div class="section-head">
+<div><h2>My Garage</h2><p>Record the values shown for cars you already own. These observations help estimate installed upgrade value for auction cars of the same model.</p></div>
+<button class="primary-btn" id="addGarage" type="button">+ Add Garage Car</button>
+</div>
+<div class="auction-tools garage-filter-tools">
+<input autocomplete="off" id="garageSearch" placeholder="Search garage cars..." type="search"/>
+<select id="garageCarTypeFilter" aria-label="Filter Garage by Car Type"><option value="">All Car Types</option></select>
+</div>
+<div class="table-wrap">
+<table class="garage-table" id="garageTable">
+<thead><tr><th data-garage-sort="date">Date</th><th data-garage-sort="vehicle">Vehicle</th><th class="fh6-garage-car-type-col" data-garage-sort="carType">Car Type</th><th data-garage-sort="stockPi">Stock</th><th data-garage-sort="currentPi">Current</th><th class="fh6-garage-target-col" data-garage-sort="targetPi">Target PI</th><th data-garage-sort="autoshow">Autoshow</th><th data-garage-sort="purchased">Purchased</th><th data-garage-sort="total">Total Car Value</th><th data-garage-sort="parts">Parts Value</th><th data-garage-sort="appreciated">Appreciated Value</th><th></th></tr></thead>
+<tbody id="garageBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="garageEmpty">No garage cars recorded yet. Add cars you already own to build your personal upgrade-value reference.</div>
+</div>
+
+<div class="tab-panel" id="tab-checklist">
+<div class="section-head">
+<div><h2>Checklist / Auction Hunt</h2><p>Set your personal priority list for daily Auction House searches. Owned status comes from My Garage unless you override it.</p></div>
+</div>
+<div class="auction-tools checklist-tools">
+<input autocomplete="off" id="checklistSearch" placeholder="Search checklist cars..." type="search"/>
+<select id="checklistView"><option value="hunt">Today's Hunt — Needed</option><option value="all">All Cars</option><option value="notOwned">Needed + Not Owned</option><option value="owned">Owned</option><option value="neededOwned">Needed + Owned</option></select>
+</div>
+<div class="checklist-help">Use a simple High / Medium / Low priority for your daily hunting list. Need is your personal target; Owned is normally based on Garage records. A manual Owned override is available when your Garage list is not yet complete.</div>
+<div class="table-wrap">
+<table class="checklist-table" id="checklistTable">
+<thead><tr><th>Priority</th><th>Need</th><th>Owned</th><th>Vehicle</th><th>Rarity</th><th>Autoshow Price</th><th>Unlock Method</th><th></th></tr></thead>
+<tbody id="checklistBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="checklistEmpty">No cars match this checklist view.</div>
+</div>
+<div class="tab-panel" id="tab-dashboard">
+<div class="section-head"><div><h2>Database Dashboard</h2><p>These numbers are calculated from your local auction observations.</p></div></div>
+<div class="stats-grid">
+<div class="stat-card"><span>Cars</span><strong id="dashCars">753</strong></div>
+<div class="stat-card"><span>Auction Observations</span><strong id="dashAuctions">0</strong></div>
+<div class="stat-card"><span>Known Winning Bids</span><strong id="dashSold">0</strong></div><div class="stat-card"><span>Unknown / Assumed Results</span><strong id="dashUnknown">0</strong></div>
+<div class="stat-card"><span>Cars With Auction Data</span><strong id="dashCovered">0</strong></div>
+</div>
+<div class="dashboard-note">
+<h3>How the purchase analysis works</h3>
+<p><strong>Raw Premium</strong> = Auction Price − Autoshow Value.</p>
+<p>PI increase is recorded as a clue about modifications, not as a direct conversion from PI to Credits.</p>
+</div>
+<div class="table-wrap"><table id="summaryTable"><thead><tr><th>Vehicle</th><th>Autoshow</th><th>Winning Bids</th><th>Avg Winning</th><th>Base PI</th><th>Avg Auction PI</th><th>Avg PI Δ</th></tr></thead><tbody id="summaryBody"></tbody></table></div>
+</div>
+<div aria-hidden="true" class="modal" id="aboutModal">
+<div class="modal-card" style="max-width:620px">
+<div class="modal-head"><h2>About Your Database</h2><button class="modal-close" id="closeAboutModal" type="button">×</button></div>
+<div style="padding:16px">
+<h3 style="margin:0 0 8px;color:var(--purple)">Forza Horizon Car Database</h3>
+<p style="margin:5px 0;font-size:13px;color:#444" id="aboutVersionInfo"><strong>v0.87.00 · Car DB v1.0 · 655 cars</strong></p>
+<div class="dashboard-note" style="margin-top:14px">
+<h3>How your data is stored</h3>
+<p>This database stores your personal data locally in this browser using Chrome's IndexedDB storage. Your Garage, Auction Data, Checklist, My Auctions, and related information remain on this computer unless you back them up or import a database.</p>
+<p>Your data is not automatically saved to a separate backup file. Use <strong>Backup Database</strong> regularly to create a file you can keep somewhere safe.</p>
+<p>If you clear this site's browser data, your locally stored database may be removed. Keeping regular backups is recommended.</p>
+</div>
+<div class="dashboard-note">
+<h3>Backup status</h3>
+<p id="aboutBackupStatus">Last backup: Never</p>
+</div>
+<details class="dashboard-note attribution-note patch-notes-panel">
+<summary>Patch Notes</summary>
+<div class="patch-notes-groups">
+<div class="patch-group"><div class="patch-group-title">v0.88</div><div class="patch-version-grid"><details class="patch-version"><summary>v0.88.00</summary><div>Rebuilt local storage around one generic IndexedDB for FH4, FH5, and FH6. Personal data is now separated by game, switching games preserves all three datasets, and RESET clears only the active game. Backups now include all three games.</div></details></div></div><div class="patch-group"><div class="patch-group-title">v0.86</div><div class="patch-version-grid">
+<details class="patch-version"><summary>v0.87.00</summary><div>Restored country flags beside car rarity on the Cars tab for FH5 and FH6.</div></details>
+<details class="patch-version"><summary>v0.86.26</summary><div>Reworked Patch Notes into compact, grouped version rows; clicking a version expands its row and highlights the selected version.</div></details>
+<details class="patch-version"><summary>v0.86.24</summary><div>Fixed the <code>g is not defined</code> startup/rendering error that prevented the database from opening.</div></details>
+<details class="patch-version"><summary>v0.86.23</summary><div>Recovery build based on .21; added database error diagnostics and recovery controls.</div></details>
+<details class="patch-version"><summary>v0.86.22</summary><div>Garage sorting/layout changes; fixed table widths and PI column sizing — later caused major regressions.</div></details>
+<details class="patch-version"><summary>v0.86.21</summary><div>Fixed FH6 Car Type static data; 655 FH6 cars, 647 with Car Type.</div></details>
+<details class="patch-version"><summary>v0.86.20</summary><div>Fixed FH4 + FH6 data mixing; active game's static car IDs became authoritative.</div></details>
+<details class="patch-version"><summary>v0.86.19</summary><div>Rebuilt from .17; restored major functionality while attempting Car Type, dropdown, and sorting fixes.</div></details>
+<details class="patch-version"><summary>v0.86.18</summary><div>Attempted Car Type dropdown, Garage sorting, and Car Type display — introduced significant bugs.</div></details>
+<details class="patch-version"><summary>v0.86.17</summary><div>Fixed Autoshow price compatibility with FH6's <code>autoshow_value</code> field.</div></details>
+<details class="patch-version"><summary>v0.86.16</summary><div>Fixed new Garage entries losing optional fields; added automatic Autoshow price storage/display.</div></details>
+<details class="patch-version"><summary>v0.86.15</summary><div>Restored missing PI-status function; discovered prior “failed” saves were actually present; continued Garage-save investigation.</div></details>
+<details class="patch-version"><summary>v0.86.14</summary><div>Further simplified and defended Garage save process; added read-back verification.</div></details>
+<details class="patch-version"><summary>v0.86.13</summary><div>Rebuilt Garage saving more defensively; simplified new-record creation and error reporting.</div></details>
+<details class="patch-version"><summary>v0.86.12</summary><div>Attempted to fix Garage saving and optional-field handling.</div></details>
+<details class="patch-version"><summary>v0.86.11</summary><div>Refined PI field sizing/formatting; Target PI matched Current PI styling; only Vehicle required.</div></details>
+<details class="patch-version"><summary>v0.86.10</summary><div>Rearranged Garage modal sections; Vehicle/Date/Duplicate Entry and Purchase &amp; Value layout.</div></details>
+<details class="patch-version"><summary>v0.86.9</summary><div>Major Add Garage Car modal reorganization; grouped PI fields and improved layout.</div></details>
+<details class="patch-version"><summary>v0.86.8</summary><div>Restored Car Type to Add Garage Car and made FH6 static Car Type authoritative.</div></details>
+<details class="patch-version"><summary>v0.86.7</summary><div>FH6 Garage Target PI now uses the same PI formatting as Stock/Current, with a subtle red/green status bar beside Current PI; Garage car lists now populate immediately when the modal opens.</div></details>
+<details class="patch-version"><summary>v0.86.5</summary><div>FH6 Garage car types now come directly from the FH6 static database; Garage shows Car Type, Target PI, and stock-PI target pass indicators.</div></details>
+<details class="patch-version"><summary>v0.86.3</summary><div>Added distinct warm-orange backgrounds for Barn Find and Treasure Car rarities and condensed the database-switch warning text.</div></details>
+<details class="patch-version"><summary>v0.86.2</summary><div>Active-game header indicator with an original FH4/FH6 racing-style number beside the main title.</div></details>
+<details class="patch-version"><summary>v0.86.1</summary><div>Minor FH6 presentation cleanup: hidden placeholder car images, clearer Forza Edition rarity styling, and a single Unobtainable description.</div></details>
+<details class="patch-version"><summary>v0.86.0</summary><div>FH6 primary car-data UI with Offroad, country flags, searchable Unobtainable tagging, and a dedicated Unobtainable section.</div></details>
+</div></div>
+<div class="patch-group"><div class="patch-group-title">v0.85</div><div class="patch-version-grid">
+<details class="patch-version"><summary>v0.85.9</summary><div><ul><li>Added a dedicated Car Database Information window from the database version and car-count controls.</li><li>Added selectable FH4 / FH6 car databases with a destructive switch warning and game-specific database information.</li><li>Fixed Cars-page sorting so Vehicle, Value, performance stats, and PI sort consistently in both directions.</li><li>Added full car-data editing from the main Cars page.</li><li>Car edits are now stored in the local car database without being overwritten by the static source data.</li><li>Improved Auction Observation → Garage recovery and linking.</li><li>Added backup age tracking and backup reminders.</li><li>Added database reset with backup verification and exact DELETE confirmation.</li></ul></div></details>
+</div></div>
+</div>
+</details>
+<details class="dashboard-note attribution-note" style="margin-bottom:0">
+<summary>Credits &amp; Copyright</summary>
+<p>Database coding, development, troubleshooting, and refinement assisted by <strong>OpenAI ChatGPT</strong>.</p>
+<p>Car data sourced from the <a href="https://forza.fandom.com/wiki/Forza_Horizon_4" target="_blank" rel="noopener noreferrer">Forza Wiki on Fandom</a>.</p>
+<p>Car data and structured content are sourced from the Forza Wiki on Fandom and used under the applicable source licensing terms.</p>
+<p><strong>Forza Horizon 4</strong>, car renders, logos, and related game media are the property of their respective rights holders, including Playground Games, Turn 10 Studios, and Microsoft.</p>
+<p>This is a non-commercial, open-source project and is not affiliated with or endorsed by Microsoft, Playground Games, or Turn 10 Studios.</p>
+</details>
+</div>
+<div class="modal-actions"><label style="margin-right:auto;font-size:12px;color:#555"><input type="checkbox" id="dontShowAbout"> Don't show this message again</label><button class="primary-btn" id="closeAbout" type="button">Got it</button></div>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="carDbModal">
+<div class="modal-card switch-db-modal-card" style="max-width:640px">
+<div class="modal-head"><h2>Car Database Information</h2><button class="modal-close" id="closeCarDbModal" type="button">×</button></div>
+<div style="padding:16px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+<label style="font-size:12px;font-weight:700;color:#555" for="carDbGameSelect">Active Game Database</label>
+<select id="carDbGameSelect" class="field-select" style="height:36px;min-width:220px"><option value="FH4">Forza Horizon 4</option><option value="FH5">Forza Horizon 5</option><option value="FH6">Forza Horizon 6</option></select>
+</div>
+<div class="db-info-grid">
+<div class="db-info-label">Game</div><div class="db-info-value" id="carDbInfoGame">Forza Horizon 4</div><div class="db-info-label">Database Name</div><div class="db-info-value">Forza Horizon Car Database</div>
+<div class="db-info-label">Current App Version</div><div class="db-info-value" id="carDbInfoAppVersion">v0.87.00</div><div class="db-info-label">Database Version</div><div class="db-info-value" id="carDbInfoVersion">v1.0</div>
+<div class="db-info-label">Car Records</div><div class="db-info-value" id="carDbInfoCount">753</div><div class="db-info-label">Unobtainable Cars</div><div class="db-info-value" id="carDbInfoUnobtainable">0</div>
+<div class="db-info-label">Data File</div><div class="db-info-value" id="carDbInfoFile">FH4_Car_Data_v1_0.js</div>
+<div class="db-info-label">Source</div><div class="db-info-value"><a class="db-info-link" id="carDbInfoSource" href="https://forza.fandom.com/wiki/Forza_Horizon_4/Cars" target="_blank" rel="noopener noreferrer">Forza Wiki on Fandom — FH4 Cars</a></div><div class="db-info-label">Snapshot</div><div class="db-info-value" id="carDbInfoSnapshot">September 15, 2026</div>
+</div>
+<div class="db-info-note">Your personal data is separate from the static car database.</div>
+<div class="dashboard-note" style="margin-top:10px;margin-bottom:8px;border-color:#e3b4b4;background:#fff7f7;padding:10px 12px">
+<h3 style="color:#b71c1c;margin-bottom:5px">Switching games preserves each game’s personal data</h3>
+<p style="margin:3px 0">Your FH4, FH5, and FH6 personal data is stored separately inside one IndexedDB. Switching games only changes which game is active.</p>
+<p style="margin:3px 0">If you wish to save a backup of your personal data, use the Backup feature below. <span id="carDbSwitchBackupStatus" style="color:#777;font-size:12px">Last backup: Never</span></p>
+</div>
+</div>
+<div class="modal-actions"><button class="small-btn backup-btn" id="carDbSwitchBackup" type="button">backup</button><button class="secondary-btn" id="closeCarDb" type="button">CANCEL</button><button class="primary-btn" id="switchCarDb" type="button">Switch Database</button></div>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="resetModal">
+<div class="modal-card" style="max-width:560px">
+<div class="modal-head"><h2 style="color:#b71c1c">⚠ Reset Database</h2><button class="modal-close" id="closeResetModal" type="button">×</button></div>
+<div style="padding:16px">
+<div class="dashboard-note" style="border-color:#e3b4b4;background:#fff7f7">
+<h3 style="color:#b71c1c">This will permanently delete the current game's local data.</h3>
+<p>This includes this game's Garage, Auction Data, My Auctions, Checklist, personal car edits, priorities, and other locally stored data.</p>
+<p><strong>FH4, FH5, and FH6 data are stored separately.</strong> Resetting the active game will not delete the other two games. The current game's static car database will be rebuilt automatically.</p>
+</div>
+<div class="dashboard-note">
+<h3>Backup status</h3>
+<p id="resetBackupStatus">Last backup: Never</p>
+<p style="margin-bottom:0;color:#777;font-size:12px">If you have made changes since your last backup, use <strong>backup</strong> below before continuing.</p>
+</div>
+<label style="display:block;font-size:12px;font-weight:700;color:#444;margin:14px 0 5px">Type <strong>DELETE</strong> to enable RESET</label>
+<input id="resetConfirmInput" type="text" autocomplete="off" spellcheck="false" style="width:100%;box-sizing:border-box;border:1px solid #bbb;border-radius:5px;padding:9px;font:inherit;text-transform:none"/>
+</div>
+<div class="modal-actions"><button class="secondary-btn" id="cancelReset" type="button">CANCEL</button><button class="small-btn backup-btn" id="resetBackup" type="button">backup</button><button class="small-btn reset-btn" id="proceedReset" type="button" disabled>RESET</button></div>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="carEditModal">
+<div class="modal-card">
+<div class="modal-head"><h2 id="carEditModalTitle">Edit Car</h2><button class="modal-close" id="closeCarEditModal" type="button">×</button></div>
+<form id="carEditForm">
+<input id="carEditId" type="hidden"/>
+<div class="form-grid">
+<label>Vehicle Name<input id="carEditName" required type="text"/></label>
+<label>Year<input id="carEditYear" min="1886" max="2100" required type="number"/></label>
+<label>Rarity<input id="carEditRarity" type="text"/></label>
+<label>Unlock Method<input id="carEditUnlock" type="text"/></label>
+<label>Autoshow Value (CR)<input id="carEditValue" min="0" step="1" type="number"/></label>
+<label>Stock Class<input id="carEditClass" maxlength="2" type="text"/></label>
+<label>Stock PI<input id="carEditPi" min="0" max="9999" step="1" type="number"/></label>
+<label>Speed<input id="carEditSpeed" step="0.1" type="number"/></label>
+<label>Handling<input id="carEditHandling" step="0.1" type="number"/></label>
+<label>Acceleration<input id="carEditAcceleration" step="0.1" type="number"/></label>
+<label>Launch<input id="carEditLaunch" step="0.1" type="number"/></label>
+<label>Braking<input id="carEditBraking" step="0.1" type="number"/></label>
+<label class="full">Fandom Source URL<input id="carEditSourceUrl" type="url"/></label>
+<label class="full">Remote Image URL<input id="carEditImageRemote" type="url"/></label>
+<label class="full">Local Image Path<input id="carEditImageLocal" type="text"/></label>
+<div class="car-edit-note">These edits are saved to your local car database and will remain separate from the original static car-data file. The permanent Car ID cannot be changed because your Garage, Auction Data, and Checklist records use it to stay linked to this vehicle.</div>
+</div>
+<div class="modal-actions"><button class="small-btn" id="cancelCarEdit" type="button">Cancel</button><button class="primary-btn" type="submit">Save Car Changes</button></div>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="auctionModal">
+<div class="modal-card">
+<div class="modal-head"><h2 id="modalTitle">Add Auction Observation</h2><button class="modal-close" id="closeModal" type="button">×</button></div>
+<form id="auctionForm">
+<input id="auctionId" type="hidden"/>
+<div class="form-grid">
+<label>Vehicle<div class="car-picker"><div class="car-search-wrap"><input autocomplete="off" id="auctionCarSearch" list="auctionCarList" placeholder="Search or select manufacturer, model or year..." type="search"/><span aria-hidden="true" class="car-count-badge" id="auctionCarCount">0</span></div><datalist id="auctionCarList"></datalist><select aria-hidden="true" id="auctionCar" tabindex="-1"></select></div></label>
+<label>Date/time<input id="auctionDate" required="" type="datetime-local"/></label>
+<label>Duplicate Entry ×<input id="auctionDuplicateCount" max="100" min="1" required="" step="1" type="number" value="1"/><small>Creates multiple identical auction observations. You can edit individual copies afterward.</small></label>
+<div aria-hidden="true"></div>
+<div class="form-group-label full">Auction Prices</div>
+<label>Start Bid (CR)<input id="startingBid" min="0" step="1" type="number"/></label>
+<label>Buyout (CR)<input id="buyout" min="0" step="1" type="number"/></label>
+<label>Highest Bid (CR)<input id="highestBid" min="0" step="1" type="number"/><small>Current highest bid you observed.</small></label>
+<label>Winning Bid (CR)<input id="winningBid" min="0" step="1" type="number"/><small>Final price if you watched the auction finish.</small></label>
+<div class="form-group-label full">Upgrade Information</div>
+<label>Upgraded?<select id="upgraded" disabled=""><option>Unknown</option><option>Stock</option><option>Upgraded</option><option>Downgraded</option></select><small>Automatically determined from Auction PI compared with the vehicle stock PI.</small></label>
+<label>Auction PI<input id="auctionPi" max="999" min="1" placeholder="e.g. 850" step="1" type="number"/></label>
+<div class="timer-box full"><div class="timer-title">Auction timer / time remaining</div><div class="timer-presets"><button data-auction-seconds="3600" type="button">1h</button><button data-auction-seconds="10800" type="button">3h</button><button data-auction-seconds="21600" type="button">6h</button><button data-auction-seconds="43200" type="button">12h</button><button data-auction-seconds="86400" type="button">24h</button><button data-auction-seconds="0" type="button">Clear</button></div><div class="timer-custom"><label>Hours<input id="auctionTimerHours" max="24" min="0" type="number" value="0"/></label><label>Minutes<input id="auctionTimerMinutes" max="59" min="0" type="number" value="0"/></label><label>Seconds<input id="auctionTimerSeconds" max="59" min="0" type="number" value="0"/></label></div><div class="timer-display" id="auctionTimerDisplay">No timer set</div><div class="timer-note">Enter the time remaining shown in-game. The countdown appears in the Outcome column and does not change your stored record.</div></div>
+<label>Outcome<select id="outcome"><option>Active</option><option>Potentially Sold</option><option>Sold</option><option>Buyout Sold</option><option>Unsold / Expired</option><option>Auction Ended — Result Unknown</option></select><small>Automatically inferred from the bid data and timer. Unsold / Expired remains a manual choice.</small></label>
+<label>Final Buyer<select id="auctionBuyer"><option value="">Not Recorded</option><option value="me">Me — Add to Garage</option><option value="other">Another User</option></select><small>If you won the auction, the car is added to My Garage automatically when a final price is recorded.</small></label>
+<label class="full">Notes<textarea id="auctionNotes" placeholder="Tune, swaps, visible upgrades, unusual buyout, seller details, etc." rows="3"></textarea></label>
+</div>
+<div class="calculation-box" id="liveCalc">Base PI: — · Auction PI: — · PI change: — · Adjusted premium: —</div>
+<div class="modal-actions"><button class="small-btn" id="cancelAuction" type="button">Cancel</button><button class="primary-btn" type="submit">Save Observation</button></div>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="buyoutModal">
+<div class="modal-card" style="max-width:480px">
+<div class="modal-head"><h2>Record Buyout</h2><button class="modal-close" id="closeBuyoutModal" type="button">×</button></div>
+<div style="padding:16px">
+<div id="buyoutConfirmText" style="font-size:14px;margin-bottom:14px"></div>
+<label style="display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:bold;color:#444">Who bought the car?
+                <select id="buyoutBuyer" style="border:1px solid #bbb;border-radius:5px;padding:8px;font:inherit;font-weight:normal">
+<option value="me">Me — Add to Garage</option>
+<option value="other">Other</option>
+</select>
+</label>
+<small style="display:block;color:#777;margin-top:6px">If you choose Me, the completed buyout will also be added to My Garage.</small>
+</div>
+<div class="modal-actions"><button class="small-btn" id="cancelBuyout" type="button">Cancel</button><button class="primary-btn" id="confirmBuyout" type="button">Confirm Buyout</button></div>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="myAuctionModal">
+<div class="modal-card">
+<div class="modal-head"><h2 id="myAuctionModalTitle">Add My Auction</h2><button class="modal-close" id="closeMyAuctionModal" type="button">×</button></div>
+<form id="myAuctionForm">
+<input id="myAuctionId" type="hidden"/>
+<div class="form-grid">
+<label>Vehicle<div class="car-picker"><div class="car-search-wrap"><input autocomplete="off" id="myAuctionCarSearch" list="myAuctionCarList" placeholder="Search or select manufacturer, model or year..." type="search"/><span aria-hidden="true" class="car-count-badge" id="myAuctionCarCount">0</span></div><datalist id="myAuctionCarList"></datalist><select aria-hidden="true" id="myAuctionCar" tabindex="-1"></select></div></label>
+<label>Listed date/time<input id="myAuctionListedAt" required="" type="datetime-local"/></label>
+<label>Start Bid (CR)<input id="myAuctionStart" min="0" step="1" type="number"/></label>
+<label>Buyout (CR)<input id="myAuctionBuyout" min="0" step="1" type="number"/></label>
+<label>Highest Bid (CR)<input id="myAuctionHighest" min="0" step="1" type="number"/></label>
+<label>Winning Bid (CR)<input id="myAuctionWinning" min="0" step="1" type="number"/></label>
+<label>Status<select id="myAuctionOutcome"><option>Active</option><option>Sold</option><option>Buyout Sold</option><option>Did Not Sell</option></select></label>
+<div aria-hidden="true"></div>
+<div class="timer-box full">
+<div class="timer-title">Auction timer / time remaining</div>
+<div class="timer-presets"><button data-seconds="3600" type="button">1h</button><button data-seconds="10800" type="button">3h</button><button data-seconds="21600" type="button">6h</button><button data-seconds="43200" type="button">12h</button><button data-seconds="86400" type="button">24h</button></div>
+<div class="timer-custom"><label>Hours<input id="timerHours" max="24" min="0" type="number" value="0"/></label><label>Minutes<input id="timerMinutes" max="59" min="0" type="number" value="0"/></label><label>Seconds<input id="timerSeconds" max="59" min="0" type="number" value="0"/></label></div>
+<div class="timer-display" id="myAuctionTimerDisplay">No timer set</div>
+<div class="timer-note">Enter the time remaining shown in-game. Maximum 24 hours. The countdown is saved with the auction.</div><label class="full retention-reminder"><input id="myAuctionRetentionReminder" type="checkbox"/> Activate 60-day car retrieval reminder</label><div class="timer-note" id="retentionDisplay">No 60-day reminder set</div>
+</div>
+<label class="full">Notes<textarea id="myAuctionNotes" placeholder="Tune, upgrades, buyer, unusual result, etc." rows="3"></textarea></label>
+</div>
+<div class="modal-actions"><button class="small-btn" id="cancelMyAuction" type="button">Cancel</button><button class="primary-btn" type="submit">Save My Auction</button></div>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal" id="garageModal">
+<div class="modal-card">
+<div class="modal-head"><h2 id="garageModalTitle">Add Garage Car</h2><button class="modal-close" id="closeGarageModal" type="button">×</button></div>
+<form id="garageForm">
+<input id="garageId" type="hidden"/>
+<div class="form-grid">
+<div class="garage-section garage-details-section">
+<div class="garage-details-grid">
+<label>Vehicle<div class="car-picker"><input autocomplete="off" id="garageCarSearch" placeholder="Search manufacturer, model or year..." type="search"/><select id="garageCar" required=""></select></div><small id="garageCarType" class="garage-modal-car-type">Car Type: —</small></label>
+<label>Date<input id="garageDate" type="date"/></label>
+<label>Duplicate Entry ×<input id="garageDuplicateCount" max="100" min="1" step="1" type="number" value="1"/></label>
+</div>
+</div>
+<div class="garage-section garage-financial-section">
+<div class="garage-section-title">Purchase &amp; Value</div>
+<div class="garage-financial-grid">
+<label>Purchased Price (CR)<input id="garagePurchased" min="0" step="1" type="number"/></label>
+<label>Total Car Value (CR)<input id="garageTotal" min="0" step="1" type="number"/></label>
+<label>Parts Value (CR)<input id="garageParts" min="0" step="1" type="number"/></label>
+<label>Appreciated Value (CR)<input id="garageAppreciation" min="0" step="1" type="number"/><small>Market premium above Autoshow, kept separate from what you paid.</small></label>
+</div>
+</div>
+<div class="garage-pi-group">
+<div class="garage-pi-group-title">Performance Index</div>
+<div class="garage-pi-grid">
+<div class="garage-pi-field"><span>Stock PI</span><div class="garage-pi-static" id="garageStockPiDisplay">—</div><small>Static from the car database.</small></div>
+<div class="garage-pi-field"><span>Current PI</span><div class="garage-pi-static garage-pi-current"><div class="pi-entry"><span class="pi-class d pi-entry-class" id="garageCurrentPiClass">D</span><input autocomplete="off" class="pi-entry-num" id="garageCurrentPi" inputmode="numeric" maxlength="3" pattern="[0-9]{1,3}" type="text"/></div></div></div>
+<div class="garage-pi-field" id="garageTargetPiField"><span>Target PI</span><div class="garage-pi-static garage-pi-target"><div class="pi-entry"><span class="pi-class d pi-entry-class" id="garageTargetPiClass">D</span><input autocomplete="off" class="pi-entry-num" id="garageTargetPi" inputmode="numeric" maxlength="3" pattern="[0-9]{1,3}" placeholder="500" type="text"/></div></div><small>Optional FH6 target.</small></div>
+<div class="garage-pi-status-text unknown" id="garageTargetStatusText">Target status: —</div>
+<div class="garage-pi-difference" id="garagePiDifference">Current vs Target: —</div>
+</div>
+</div>
+</div>
+<div class="calculation-box" id="garageCalc">Autoshow: — · Purchased: — · Total value: — · Parts value: — · Difference vs Autoshow: —</div>
+<div class="modal-actions"><button class="small-btn" id="cancelGarage" type="button">Cancel</button><button class="primary-btn" type="submit">Save Garage Car</button></div>
+</form>
+</div>
+</div>
+</div>
+<script src="FH4_Car_Data_v1_0.js"></script><script src="FH5_Car_Data_v1_0.js"></script><script src="FH6_Car_Data_v1_0.js"></script><script>
+(function(){
+const table=document.getElementById("carTable");
+const tbody=table.querySelector("tbody");
+const input=document.getElementById("carSearch");
+const highlightInput=document.getElementById("carHighlight");
+const field=document.getElementById("searchField");
+const count=document.getElementById("resultCount");
+const noResults=document.getElementById("noResults");
+const DB_NAME="FHCarDatabase";
+const LEGACY_DB_NAMES=["FH4CarDatabase","FH4CarDatabaseV7"];
+const ACTIVE_GAME_KEY="Forza_Horizon_Car_Database_activeGame";
+const APP_VERSION="v0.88.01";
+const DATABASE_CONFIGS={
+    FH4:{game:"Forza Horizon 4",dbVersion:"1.0",globalName:"FH4_CAR_DATABASE",file:"FH4_Car_Data_v1_0.js",source:"https://forza.fandom.com/wiki/Forza_Horizon_4/Cars",sourceLabel:"Forza Wiki on Fandom — FH4 Cars",snapshot:"September 15, 2026"},
+    FH5:{game:"Forza Horizon 5",dbVersion:"1.0",globalName:"FH5_CAR_DATABASE",file:"FH5_Car_Data_v1_0.js",source:"https://forza.fandom.com/wiki/Forza_Horizon_5/Cars",sourceLabel:"Forza Wiki on Fandom — FH5 Cars",snapshot:"October 3, 2026"},
+    FH6:{game:"Forza Horizon 6",dbVersion:"1.0",globalName:"FH6_CAR_DATABASE",file:"FH6_Car_Data_v1_0.js",source:"https://forza.fandom.com/wiki/Forza_Horizon_6/Cars",sourceLabel:"Forza Wiki on Fandom — FH6 Cars",snapshot:"September 26, 2026"}
+};
+let activeGame=localStorage.getItem(ACTIVE_GAME_KEY)||"FH6";
+if(!DATABASE_CONFIGS[activeGame])activeGame="FH4";
+const DB_VERSION=8;
+let db;
+let cars=[];
+let auctions=[];
+let garage=[];
+let myAuctions=[];
+let checklist=[];
+
+function tokens(value){return value.toLowerCase().trim().split(/\s+/).filter(Boolean).slice(0,5)}
+function carImageHtml(c,extraClass=""){const local=c.imageLocal||"";const remote=c.imageRemote||c.image||"";const localIsPlaceholder=activeGame==="FH6"&&/^images\/car-\d+\.webp$/i.test(local);const src=remote||(localIsPlaceholder?"":local)||"";if(!src)return"";const fallback=remote&&local&&remote!==local&&!localIsPlaceholder?` onerror="this.onerror=null;this.src=${JSON.stringify(local)};this.style.display='none'"`:` onerror="this.style.display='none'"`;return `<img class="${extraClass}" src="${escapeHtml(src)}" alt="${escapeHtml(c.name||"Car")}" loading="lazy"${fallback}>`}
+function carSearchText(c){return `${c.name||""} ${c.year||""} ${c.unlockMethod||""} ${c.availability||""} ${c.country||""} ${c.autoshowValue||""} ${c.rarity||""} ${c.stockClass||""} ${c.stockPi||""} ${c.speed||""} ${c.handling||""} ${c.acceleration||""} ${c.launch||""} ${c.braking||""} ${c.offroad||""}`.toLowerCase()}
+let carSortKey="vehicle";
+let carSortDir="asc";
+function carSortValue(c,key){
+    if(key==="vehicle")return String(c.name||"");
+    if(key==="value")return Number(c.autoshowValue);
+    if(key==="speed")return Number(c.speed);
+    if(key==="handling")return Number(c.handling);
+    if(key==="acceleration")return Number(c.acceleration);
+    if(key==="launch")return Number(c.launch);
+    if(key==="braking")return Number(c.braking);
+    if(key==="offroad")return Number(c.offroad);
+    if(key==="pi")return Number(c.stockPi);
+    return String(c.name||"");
+}
+function compareCarValues(a,b,key){
+    const av=carSortValue(a,key),bv=carSortValue(b,key);
+    const an=typeof av==="number"&&Number.isFinite(av),bn=typeof bv==="number"&&Number.isFinite(bv);
+    if(an||bn){
+        if(!an&&!bn)return 0;
+        if(!an)return 1;
+        if(!bn)return -1;
+        if(av!==bv)return av-bv;
+    }else{
+        const cmp=String(av).localeCompare(String(bv),undefined,{numeric:true,sensitivity:"base"});
+        if(cmp)return cmp;
+    }
+    const byYear=Number(a.year||0)-Number(b.year||0);
+    if(byYear)return byYear;
+    return String(a.id||"").localeCompare(String(b.id||""),undefined,{numeric:true});
+}
+function sortedCars(){return [...cars].sort((a,b)=>compareCarValues(a,b,carSortKey)*(carSortDir==="desc"?-1:1))}
+const COUNTRY_FLAG_FILES={"01":["Australia","https://flagcdn.com/w20/au.png"],"02":["Austria","https://flagcdn.com/w20/at.png"],"03":["Canada","https://flagcdn.com/w20/ca.png"],"04":["China","https://flagcdn.com/w20/cn.png"],"05":["Croatia","https://flagcdn.com/w20/hr.png"],"06":["Denmark","https://flagcdn.com/w20/dk.png"],"07":["France","https://flagcdn.com/w20/fr.png"],"08":["Germany","https://flagcdn.com/w20/de.png"],"09":["Italy","https://flagcdn.com/w20/it.png"],"10":["Japan","https://flagcdn.com/w20/jp.png"],"11":["Korea","https://flagcdn.com/w20/kr.png"],"12":["Mexico","https://flagcdn.com/w20/mx.png"],"13":["Netherlands","https://flagcdn.com/w20/nl.png"],"14":["Spain","https://flagcdn.com/w20/es.png"],"15":["Sweden","https://flagcdn.com/w20/se.png"],"16":["United Arab Emirates","https://flagcdn.com/w20/ae.png"],"17":["United Kingdom","https://flagcdn.com/w20/gb.png"],"18":["United States","https://flagcdn.com/w20/us.png"]};
+function countryFlagHtml(c){
+    if(!c)return "";
+    const code=String(c.countryCode??"").padStart(2,"0");
+    const entry=COUNTRY_FLAG_FILES[code];
+    const country=String(c.country||entry?.[0]||"");
+    const url=c.countryFlagUrl||entry?.[1]||"";
+    if(!url)return "";
+    return `<img class="country-flag" src="${escapeHtml(url)}" alt="${escapeHtml(country)}" title="${escapeHtml(country)}" loading="lazy">`;
+}
+function carAvailabilityHtml(c){
+    const availability=String(c?.availability||"").trim();
+    if(availability.toLowerCase()==="unobtainable")return `<span class="availability-tag unobtainable">Unobtainable</span>`;
+    return "";
+}
+function carRarityClass(rarity){return String(rarity||"").trim().toLowerCase().replace(/\s+/g,"-")}
+function renderCarTable(){
+    const q=tokens(input.value),highlightTokens=tokens(highlightInput?.value||""),key=field.value;
+    const list=sortedCars().filter(c=>{
+        const text=key==="all"?carSearchText(c):key==="vehicle"?`${c.name||""} ${c.year||""}`:key==="availability"?`${c.unlockMethod||""} ${c.availability||""}`:key==="year"?String(c.year||""):key==="value"?`${c.autoshowValue||""} CR`:key==="rarity"?c.rarity||"":key==="performance"?`${c.stockClass||""} ${c.stockPi||""} ${c.speed||""} ${c.handling||""} ${c.acceleration||""} ${c.launch||""} ${c.braking||""} ${c.offroad||""}`:carSearchText(c);
+        return q.every(t=>text.toLowerCase().includes(t));
+    });
+    const obtainable=list.filter(c=>String(c.availability||"").toLowerCase()!=="unobtainable");
+    const unobtainable=list.filter(c=>String(c.availability||"").toLowerCase()==="unobtainable");
+    const rowHtml=c=>{const rec=checklistRecord(c.id)||{},state=ownedState(c.id),priority=["High","Medium","Low"].includes(rec.priority)?rec.priority:"",highlight=highlightTokens.length>0&&highlightTokens.every(t=>carSearchText(c).includes(t)),imageHtml=carImageHtml(c);return `<tr data-car-id="${escapeHtml(c.id)}" class="${highlight?"search-highlight ":""}${String(c.availability||"").toLowerCase()==="unobtainable"?"unobtainable-row":""}"><td class="image">${imageHtml?`<a href="${escapeHtml(c.sourceUrl||c.imageRemote||"#")}" target="_blank" rel="noopener">${imageHtml}</a>`:""}</td><td class="vehicle"><div class="vehicle-name"><a href="${escapeHtml(c.sourceUrl||"#")}" target="_blank" rel="noopener">${escapeHtml(c.name)}</a> <span class="year">${c.year||""}</span></div><div class="vehicle-meta">${String(c.availability||"").toLowerCase()==="unobtainable"?carAvailabilityHtml(c):escapeHtml(c.unlockMethod||"")}</div></td><td class="value" data-value="${Number(c.autoshowValue)||0}"><div class="value-amount">${money(c.autoshowValue)}</div><span class="rarity ${carRarityClass(c.rarity)}">${escapeHtml(c.rarity||"")}</span>${countryFlagHtml(c)}</td><td class="stat">${escapeHtml(c.speed??"—")}</td><td class="stat">${escapeHtml(c.handling??"—")}</td><td class="stat">${escapeHtml(c.acceleration??"—")}</td><td class="stat">${escapeHtml(c.launch??"—")}</td><td class="stat">${escapeHtml(c.braking??"—")}</td><td class="stat">${escapeHtml(c.offroad??"—")}</td><td class="pi"><span class="pi-class ${String(c.stockClass||"").toLowerCase()}">${escapeHtml(c.stockClass||"")}</span><span class="pi-num">${escapeHtml(c.stockPi??"")}</span></td><td><select class="car-priority-input" data-id="${escapeHtml(c.id)}" aria-label="Priority for ${escapeHtml(c.name)}"><option value="">—</option><option value="High" ${priority==="High"?"selected":""}>High</option><option value="Medium" ${priority==="Medium"?"selected":""}>Medium</option><option value="Low" ${priority==="Low"?"selected":""}>Low</option></select></td><td><input class="check-toggle car-need-toggle" data-id="${escapeHtml(c.id)}" type="checkbox" ${rec.need?"checked":""} aria-label="Need ${escapeHtml(c.name)}"></td><td><input class="check-toggle car-owned-toggle" data-id="${escapeHtml(c.id)}" type="checkbox" ${state.owned?"checked":""} aria-label="Owned ${escapeHtml(c.name)}"><span class="owned-note">${state.manual?"Manual":"Garage"}</span></td><td><button class="icon-btn edit-car-btn" data-id="${escapeHtml(c.id)}" type="button" aria-label="Edit ${escapeHtml(c.name)}" title="Edit car">✎</button></td></tr>`};
+    let html=obtainable.map(rowHtml).join("");
+    if(unobtainable.length){html+=`<tr class="unobtainable-section"><td colspan="14">Unobtainable <span class="section-count">${unobtainable.length} car${unobtainable.length===1?"":"s"}</span></td></tr>`+unobtainable.map(rowHtml).join("")}
+    tbody.innerHTML=html;
+    count.textContent=`Showing ${list.length} of ${cars.length} cars`;noResults.style.display=list.length?"none":"block";
+    table.querySelectorAll("thead th[data-sort-key]").forEach(th=>{th.classList.toggle("sort-asc",th.dataset.sortKey===carSortKey&&carSortDir==="asc");th.classList.toggle("sort-desc",th.dataset.sortKey===carSortKey&&carSortDir==="desc")});
+    return list;
+}
+function applySearch(){renderCarTable()}
+function sortCarTable(th){const key=th.dataset.sortKey;if(!key)return;if(carSortKey===key)carSortDir=carSortDir==="asc"?"desc":"asc";else{carSortKey=key;carSortDir="asc"}renderCarTable()}
+input.addEventListener("input",applySearch);if(highlightInput)highlightInput.addEventListener("input",applySearch);field.addEventListener("change",applySearch);table.querySelectorAll("thead th[data-sort-key]").forEach(th=>th.addEventListener("click",()=>sortCarTable(th)));
+
+function getActiveDatabaseConfig(){return DATABASE_CONFIGS[activeGame]||DATABASE_CONFIGS.FH4}
+function getStaticCars(){const cfg=getActiveDatabaseConfig();const data=window[cfg.globalName];return Array.isArray(data)?data:[]}
+function isCarActionable(c){return String(c?.availability||"").toLowerCase()!=="unobtainable"}
+function deleteStoreRecord(store,id){
+    return new Promise((resolve,reject)=>{
+        const r=tx(store,"readwrite").delete(id);
+        r.onsuccess=()=>resolve();
+        r.onerror=()=>reject(r.error);
+    });
+}
+async function syncStaticCars(){
+    const staticCars=getStaticCars();
+    if(!staticCars.length)return;
+    const staticIds=new Set(staticCars.map(c=>String(c.id)));
+    const existing=await getAll("cars");
+    const existingById=new Map(existing.map(c=>[String(c.id),c]));
+
+    // The unified cars store contains all three games. Only reconcile records
+    // belonging to the currently active game's static dataset; never delete
+    // another game's static records during a database switch.
+    for(const current of existing){
+        const currentGame=String(current.game||"").toUpperCase();
+        if(currentGame===activeGame && !staticIds.has(String(current.id))){
+            await deleteStoreRecord("cars",current.id);
+        }
+    }
+
+    // Add/update only records belonging to the active game's static dataset.
+    for(const sc of staticCars){
+        const current=existingById.get(String(sc.id));
+        if(!current){
+            await put("cars",{...sc});
+            continue;
+        }
+        const merged={...current};
+        for(const [key,value] of Object.entries(sc)){
+            if(key==="carType"&&activeGame==="FH6"){
+                if(merged[key]!==value)merged[key]=value;
+                continue;
+            }
+            if(merged[key]===undefined||merged[key]===null||merged[key]==="")merged[key]=value;
+        }
+        // Normalize new-schema static-data naming so the existing UI can consume FH5/FH6 fields.
+        if(merged.autoshowValue==null&&merged.autoshow_value!=null)merged.autoshowValue=merged.autoshow_value;
+        if(merged.unlockMethod==null&&merged.unlock_method!=null)merged.unlockMethod=merged.unlock_method;
+        if(merged.speed==null&&merged.stockSpeed!=null)merged.speed=merged.stockSpeed;
+        if(merged.handling==null&&merged.stockHandling!=null)merged.handling=merged.stockHandling;
+        if(merged.acceleration==null&&merged.stockAcceleration!=null)merged.acceleration=merged.stockAcceleration;
+        if(merged.launch==null&&merged.stockLaunch!=null)merged.launch=merged.stockLaunch;
+        if(merged.braking==null&&merged.stockBraking!=null)merged.braking=merged.stockBraking;
+        if(merged.offroad==null&&merged.stockOffroad!=null)merged.offroad=merged.stockOffroad;
+        if(JSON.stringify(merged)!==JSON.stringify(current))await put("cars",merged);
+    }
+    cars=await getAll("cars");
+}
+function filterCarOptions(searchId,selectId,preserveCurrent=true){const search=document.getElementById(searchId),sel=document.getElementById(selectId);if(!search||!sel)return;const q=tokens(search.value),current=preserveCurrent?sel.value:"";const list=sortedCars().filter(c=>{const text=`${c.name||""} ${c.year||""}`.toLowerCase();return q.every(t=>text.includes(t))});sel.innerHTML=list.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} (${c.year}) — ${c.stockClass}${c.stockPi}</option>`).join("");if(preserveCurrent&&list.some(c=>c.id===current))sel.value=current;else if(list.length)sel.value=list[0].id;return list}
+function refreshAuctionCarFields(){const c=getCar(document.getElementById("auctionCar").value);document.getElementById("auctionPi").value=c?.stockPi??"";updateAuctionUpgradeStatus();updateLiveCalc()}
+function populateCarSelect(){const search=document.getElementById("auctionCarSearch"),sel=document.getElementById("auctionCar");if(search)search.value="";if(sel)sel.value="";filterCarOptions("auctionCarSearch","auctionCar",false)}
+function syncCarSearch(searchId,selectId){const search=document.getElementById(searchId),sel=document.getElementById(selectId);if(!search||!sel)return;const c=getCar(sel.value);search.value=c?`${c.name||""} ${c.year||""}`.trim():"";filterCarOptions(searchId,selectId)}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function comboDisplayValue(c){return `${c.name||""} (${c.year||""}) — ${c.stockClass||""}${c.stockPi??""}`.trim()}
+function refreshCarComboList(searchId,listId){
+    const search=document.getElementById(searchId),list=document.getElementById(listId);
+    if(!search||!list)return;
+    const q=tokens(search.value);
+    const matches=sortedCars().filter(c=>isCarActionable(c)).filter(c=>{
+        const text=comboDisplayValue(c).toLowerCase();
+        return q.every(t=>text.includes(t));
+    });
+    list.innerHTML=matches.map(c=>`<option value="${escapeHtml(comboDisplayValue(c))}" data-id="${escapeHtml(c.id)}"></option>`).join("");
+    const countId=searchId==="auctionCarSearch"?"auctionCarCount":searchId==="myAuctionCarSearch"?"myAuctionCarCount":"";
+    if(countId){const badge=document.getElementById(countId);if(badge)badge.textContent=matches.length.toLocaleString("en-CA");}
+}
+function populateCarCombo(searchId,selectId,listId){
+    const search=document.getElementById(searchId),sel=document.getElementById(selectId),list=document.getElementById(listId);
+    if(!search||!sel||!list)return;
+    const carsSorted=sortedCars().filter(c=>isCarActionable(c));
+    sel.innerHTML=carsSorted.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${c.year}) — ${escapeHtml(c.stockClass||"")}${escapeHtml(c.stockPi??"")}</option>`).join("");
+    sel.selectedIndex=-1;
+    refreshCarComboList(searchId,listId);
+}
+function syncCarCombo(searchId,selectId,listId){
+    const search=document.getElementById(searchId),sel=document.getElementById(selectId),list=document.getElementById(listId);
+    if(!search||!sel||!list)return;
+    const c=getCar(sel.value);
+    search.value=c?comboDisplayValue(c):"";
+    refreshCarComboList(searchId,listId);
+}
+function selectCarFromCombo(searchId,selectId,listId){
+    const search=document.getElementById(searchId),sel=document.getElementById(selectId),list=document.getElementById(listId);
+    if(!search||!sel||!list)return null;
+    refreshCarComboList(searchId,listId);
+    const value=search.value.trim().toLowerCase();
+    const option=[...list.options].find(o=>o.value.trim().toLowerCase()===value);
+    if(option){sel.value=option.dataset.id||"";return getCar(sel.value)||null;}
+    const normalized=value.replace(/\s+/g," ");
+    const match=sortedCars().find(c=>comboDisplayValue(c).toLowerCase()===normalized);
+    sel.value=match?.id||"";
+    return match||null;
+}
+function fmtDate(v){if(!v)return"—";const d=new Date(v);return isNaN(d)?v:d.toLocaleDateString([], {year:"numeric",month:"short",day:"numeric"})}
+function garageCountForCar(carId){return garage.filter(g=>String(g.carId)===String(carId)).length}
+function garageUpgradeEstimate(carId,auctionPi){const pi=Number(auctionPi);if(!Number.isFinite(pi))return null;const records=garage.filter(g=>String(g.carId)===String(carId)&&Number.isFinite(Number(g.pi))&&Number.isFinite(Number(g.partsValue))&&Number(g.pi)>0&&Number(g.partsValue)>=0).map(g=>({pi:Number(g.pi),parts:Number(g.partsValue)})).sort((a,b)=>a.pi-b.pi);if(!records.length)return null;const exact=records.filter(r=>r.pi===pi);if(exact.length)return {value:Math.round(exact.reduce((s,r)=>s+r.parts,0)/exact.length),method:"exact garage PI match"};let lower=null,upper=null;records.forEach(r=>{if(r.pi<pi)lower=r;if(r.pi>pi&&!upper)upper=r});if(lower&&upper){const ratio=(pi-lower.pi)/(upper.pi-lower.pi);return {value:Math.round(lower.parts+(upper.parts-lower.parts)*ratio),method:"interpolated from garage PI values"};}const nearest=records.reduce((best,r)=>!best||Math.abs(r.pi-pi)<Math.abs(best.pi-pi)?r:best,null);return {value:nearest.parts,method:"nearest garage PI reference"}}
+function openDbByName(name){return new Promise(async (resolve,reject)=>{try{let requestedVersion=DB_VERSION;if(typeof indexedDB.databases==="function"){const known=await indexedDB.databases();const found=known.find(x=>x.name===name);if(found?.version)requestedVersion=Math.max(requestedVersion,found.version)}const req=indexedDB.open(name,requestedVersion);req.onupgradeneeded=e=>{const d=e.target.result;const oldVersion=e.oldVersion;const stores={};if(!d.objectStoreNames.contains("cars")){const st=d.createObjectStore("cars",{keyPath:"id"});st.createIndex("name","name");st.createIndex("game","game")}if(!d.objectStoreNames.contains("auctions")){const st=d.createObjectStore("auctions",{keyPath:"id",autoIncrement:true});st.createIndex("carId","carId");st.createIndex("date","date");st.createIndex("game","game")}else{stores.auctions=e.target.transaction.objectStore("auctions");if(!stores.auctions.indexNames.contains("game"))stores.auctions.createIndex("game","game")}if(!d.objectStoreNames.contains("garage")){const st=d.createObjectStore("garage",{keyPath:"id",autoIncrement:true});st.createIndex("carId","carId");st.createIndex("date","date");st.createIndex("game","game")}else{stores.garage=e.target.transaction.objectStore("garage");if(!stores.garage.indexNames.contains("game"))stores.garage.createIndex("game","game")}if(!d.objectStoreNames.contains("myAuctions")){const st=d.createObjectStore("myAuctions",{keyPath:"id",autoIncrement:true});st.createIndex("carId","carId");st.createIndex("listedAt","listedAt");st.createIndex("game","game")}else{stores.myAuctions=e.target.transaction.objectStore("myAuctions");if(!stores.myAuctions.indexNames.contains("game"))stores.myAuctions.createIndex("game","game")}if(!d.objectStoreNames.contains("checklist")){const st=d.createObjectStore("checklist",{keyPath:"carId"});st.createIndex("priority","priority");st.createIndex("need","need");st.createIndex("game","game")}else{stores.checklist=e.target.transaction.objectStore("checklist");if(!stores.checklist.indexNames.contains("game"))stores.checklist.createIndex("game","game")}if(oldVersion<8&&d.objectStoreNames.contains("cars")){const st=e.target.transaction.objectStore("cars");st.openCursor().onsuccess=ev=>{const cur=ev.target.result;if(!cur)return;const value=cur.value;if(!value.game){value.game=activeGame;cur.update(value)}cur.continue()}}if(oldVersion<2&&d.objectStoreNames.contains("auctions")){const st=e.target.transaction.objectStore("auctions");st.openCursor().onsuccess=ev=>{const cur=ev.target.result;if(!cur)return;const a=cur.value;if(a.winningBid==null&&a.sold!=null){a.winningBid=a.sold;delete a.sold}if(!a.game)a.game=activeGame;cur.update(a);cur.continue()}}if(oldVersion<8){for(const name of ["auctions","garage","myAuctions","checklist"]){if(!d.objectStoreNames.contains(name))continue;const st=e.target.transaction.objectStore(name);st.openCursor().onsuccess=ev=>{const cur=ev.target.result;if(!cur)return;const value=cur.value;if(!value.game){value.game=activeGame;cur.update(value)}cur.continue()}}}};req.onsuccess=e=>{const opened=e.target.result;opened.onversionchange=()=>opened.close();resolve(opened)};req.onerror=()=>reject(req.error)}catch(err){reject(err)}})}
+async function openDb(){db=await openDbByName(DB_NAME);return db}
+async function ensureDb(){if(db)return db;return openDb()}
+async function readDatabase(name){const d=await openDbByName(name);const data={cars:await getAllFromDb(d,"cars"),auctions:await getAllFromDb(d,"auctions"),garage:await getAllFromDb(d,"garage"),myAuctions:await getAllFromDb(d,"myAuctions"),checklist:await getAllFromDb(d,"checklist")};d.close();return data}
+function getAllFromDb(d,store){return new Promise((resolve,reject)=>{const r=d.transaction(store,"readonly").objectStore(store).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function inferGameFromLegacyData(legacy){const ids=[...(legacy.cars||[]).map(c=>String(c.id||"")),...(legacy.auctions||[]).map(a=>String(a.carId||"")),...(legacy.garage||[]).map(g=>String(g.carId||"")),...(legacy.myAuctions||[]).map(a=>String(a.carId||"")),...(legacy.checklist||[]).map(c=>String(c.carId||""))];const match=ids.find(id=>/^FH[456]-/i.test(id));return match?match.slice(0,3).toUpperCase():activeGame}
+async function migrateLegacyDatabase(){try{const names=typeof indexedDB.databases==="function"?await indexedDB.databases():[];const current=await readDatabase(DB_NAME);if(current.auctions.length||current.garage.length||current.myAuctions.length||current.checklist.length)return false;for(const legacyName of LEGACY_DB_NAMES){if(!names.some(x=>x.name===legacyName))continue;const legacy=await readDatabase(legacyName);const personal=[...(legacy.auctions||[]),...(legacy.garage||[]),...(legacy.myAuctions||[]),...(legacy.checklist||[])];if(!personal.length)continue;const legacyGame=inferGameFromLegacyData(legacy);for(const c of legacy.cars||[])await put("cars",{...c,game:c.game||legacyGame});for(const a of legacy.auctions||[])await put("auctions",{...a,game:a.game||legacyGame});for(const g of legacy.garage||[])await put("garage",{...g,game:g.game||legacyGame});for(const a of legacy.myAuctions||[])await put("myAuctions",{...a,game:a.game||legacyGame});for(const c of legacy.checklist||[])await put("checklist",{...c,game:c.game||legacyGame});return true}return false}catch(err){console.warn("Legacy database migration skipped:",err);return false}}
+
+function tx(store,mode){return db.transaction(store,mode).objectStore(store)}
+const GAME_STORES=new Set(["cars","auctions","garage","myAuctions","checklist"]);
+const PERSONAL_STORES=new Set(["auctions","garage","myAuctions","checklist"]);
+function getAll(store){return new Promise((resolve,reject)=>{const r=tx(store,"readonly").getAll();r.onsuccess=()=>resolve(GAME_STORES.has(store)?r.result.filter(x=>String(x.game||activeGame)===activeGame):r.result);r.onerror=()=>reject(r.error)})}
+function getAllGames(store){return new Promise((resolve,reject)=>{const r=tx(store,"readonly").getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function put(store,obj){const record=GAME_STORES.has(store)?{...obj,game:obj.game||activeGame}:obj;return new Promise((resolve,reject)=>{const r=tx(store,"readwrite").put(record);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function clearStore(store){return new Promise((resolve,reject)=>{const r=tx(store,"readwrite").clear();r.onsuccess=()=>resolve();r.onerror=()=>reject(r.error)})}
+function clearPersonalGame(store,game){return new Promise((resolve,reject)=>{const request=tx(store,"readwrite").openCursor();request.onsuccess=e=>{const cur=e.target.result;if(!cur){resolve();return}if(String(cur.value?.game||"")===game)cur.delete();cur.continue()};request.onerror=()=>reject(request.error)})}
+async function clearActiveGameData(){for(const store of GAME_STORES)await clearPersonalGame(store,activeGame)}
+function money(n){return n==null||n===""?"—":Number(n).toLocaleString("en-CA")+" CR"}
+function signed(n){return n==null||n===""?"—":(n>=0?"+":"")+Number(n).toLocaleString("en-CA")}
+function renderDbStatus(){
+    const indicator=document.getElementById("gameIndicator");
+    if(indicator){
+        const number=activeGame==="FH6"?"6":activeGame==="FH5"?"5":"4";
+        indicator.textContent=number;
+        indicator.className=`game-indicator ${activeGame.toLowerCase()}`;
+        indicator.setAttribute("aria-label",`${getActiveDatabaseConfig().game} database`);
+    }
+    const el=document.getElementById("dbStatus");
+    if(!el)return;
+    const cfg=getActiveDatabaseConfig();
+    const carDbVersion=`Car DB v${cfg.dbVersion}`;
+    const count=`${cars.length} cars`;
+    el.innerHTML=`<button class="status-chip" type="button" data-status-part="app">${escapeHtml(APP_VERSION)}</button><span class="status-separator">·</span><button class="status-chip" type="button" data-status-part="db">${escapeHtml(carDbVersion)}</button><span class="status-separator">·</span><button class="status-chip" type="button" data-status-part="cars">${escapeHtml(count)}</button>`;
+    const about=document.getElementById("aboutVersionInfo");
+    if(about)about.innerHTML=`<strong>${escapeHtml(APP_VERSION)} · ${escapeHtml(carDbVersion)} · ${escapeHtml(count)}</strong>`;
+}
+
+function getCar(id){return cars.find(c=>c.id===id)}
+const FH4_MAKES=["Mercedes-AMG","Mercedes-Benz","Alfa Romeo","Aston Martin","Land Rover","Rolls-Royce","W Motors","Spania GTA","Local Motors","Formula Drift","Hot Wheels","Hoonigan","International","Koenigsegg","KTM","Abarth","Acura","Alpine","Alumi Craft","AMC","Ariel","Audi","Austin","BAC","Bentley","BMW","Bowler","Bugatti","Buick","Cadillac","Caterham","Chevrolet","Chrysler","Citroen","Datsun","Dodge","Eagle","Ferrari","Fiat","Ford","GMC","Hennessey","Holden","Honda","Hyundai","Infiniti","Jaguar","Jeep","Lamborghini","Lancia","Lexus","Lincoln","Lotus","Maserati","Mazda","McLaren","Mercury","MINI","Mitsubishi","Morgan","Morris","Nissan","Noble","Oldsmobile","Opel","Pagani","Peugeot","Plymouth","Pontiac","Porsche","Radical","Ram","Reliant","Renault","Rimac","RJ Anderson","Shelby","Subaru","Sunbeam","Toyota","Triumph","TVR","Ultima","Vauxhall","Volkswagen","Volvo","VUHL","Willys","Zenvo"];
+function carMake(c){
+    if(c?.manufacturer)return String(c.manufacturer);
+    const name=String(c?.name||"");
+    const match=FH4_MAKES.slice().sort((a,b)=>b.length-a.length).find(make=>name===make||name.startsWith(make+" "));
+    return match||name.split(" ")[0]||"Unknown Make";
+}
+function localDateTimeInputValue(v){
+    const d=v?new Date(v):new Date();
+    if(Number.isNaN(d.getTime()))return "";
+    const pad=n=>String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function localDateInputValue(v){
+    const d=v?new Date(v):new Date();
+    if(Number.isNaN(d.getTime()))return "";
+    const pad=n=>String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function filterCarOptions(searchId,selectId,preserveCurrent=true){
+    const search=document.getElementById(searchId),sel=document.getElementById(selectId);
+    if(!search||!sel)return;
+    const q=tokens(search.value);
+    const current=preserveCurrent?sel.value:"";
+    const list=sortedCars().filter(c=>isCarActionable(c)).filter(c=>{const text=`${c.name||""} ${c.year||""}`.toLowerCase();return q.every(t=>text.includes(t));});
+    sel.innerHTML=list.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} (${c.year}) — ${c.stockClass}${c.stockPi}</option>`).join("");
+    if(preserveCurrent&&list.some(c=>c.id===current))sel.value=current;
+    else if(list.length)sel.value=list[0].id;
+    return list;
+}
+function updateAuctionUpgradeStatus(){const c=getCar(document.getElementById("auctionCar").value),pi=numOrNull("auctionPi"),status=document.getElementById("upgraded");if(!status)return;let value="Unknown";if(c&&pi!=null&&c.stockPi!=null){if(Number(pi)>Number(c.stockPi))value="Upgraded";else if(Number(pi)<Number(c.stockPi))value="Downgraded";else value="Stock"}status.value=value;status.classList.remove("upgrade-status-upgraded","upgrade-status-stock","upgrade-status-downgraded","upgrade-status-unknown");status.classList.add(`upgrade-status-${value.toLowerCase().replace(/\s+/g,"-")}`)}
+function refreshAuctionCarFields(){const c=getCar(document.getElementById("auctionCar").value);document.getElementById("auctionPi").value=c?.stockPi??"";updateAuctionUpgradeStatus();updateLiveCalc()}
+
+function populateCarSelect(){
+    const search=document.getElementById("auctionCarSearch"),sel=document.getElementById("auctionCar");
+    if(search)search.value="";
+    if(sel)sel.value="";
+    filterCarOptions("auctionCarSearch","auctionCar",false);
+}
+function syncCarSearch(searchId,selectId){
+    const search=document.getElementById(searchId),sel=document.getElementById(selectId);
+    if(!search||!sel)return;
+    const c=getCar(sel.value);
+    search.value=c?`${c.name||""} ${c.year||""}`.trim():"";
+    filterCarOptions(searchId,selectId);
+}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function fmtDate(v){if(!v)return"—";const d=new Date(v);return isNaN(d)?v:d.toLocaleDateString([], {year:"numeric",month:"short",day:"numeric"})}
+function garageCountForCar(carId){return garage.filter(g=>String(g.carId)===String(carId)).length}
+function garageUpgradeEstimate(carId,auctionPi){
+    const pi=Number(auctionPi);
+    if(!Number.isFinite(pi))return null;
+    const records=garage.filter(g=>String(g.carId)===String(carId)&&Number.isFinite(Number(g.pi))&&Number.isFinite(Number(g.partsValue))&&Number(g.pi)>0&&Number(g.partsValue)>=0).map(g=>({pi:Number(g.pi),parts:Number(g.partsValue)})).sort((a,b)=>a.pi-b.pi);
+    if(!records.length)return null;
+    const exact=records.filter(r=>r.pi===pi);
+    if(exact.length)return {value:Math.round(exact.reduce((s,r)=>s+r.parts,0)/exact.length),method:"exact garage PI match"};
+    let lower=null,upper=null;
+    records.forEach(r=>{if(r.pi<pi)lower=r;if(r.pi>pi&&!upper)upper=r});
+    if(lower&&upper){const ratio=(pi-lower.pi)/(upper.pi-lower.pi);return {value:Math.round(lower.parts+(upper.parts-lower.parts)*ratio),method:"interpolated from garage PI values"};}
+    const nearest=records.reduce((best,r)=>!best||Math.abs(r.pi-pi)<Math.abs(best.pi-pi)?r:best,null);
+    return {value:nearest.parts,method:"nearest garage PI reference"};
+}
+let marketSnapshotSort={key:"vehicle",order:"asc"};
+const expandedSnapshotMakes=new Set();
+function renderMarketSnapshot(list){
+    const body=document.getElementById("auctionSnapshotBody");
+    const groups=new Map();
+    list.forEach(a=>{const c=getCar(a.carId);if(!c)return;const make=carMake(c);if(!groups.has(make))groups.set(make,{items:[],carIds:new Set()});const g=groups.get(make);g.items.push(a);g.carIds.add(String(a.carId))});
+    const makeGroups=[...groups.entries()].map(([make,g])=>({make,items:g.items,carIds:g.carIds,uniqueCars:(cars.filter(c=>carMake(c).toLowerCase()===make.toLowerCase()).length||g.carIds.size),observations:g.items.length,garage:g.items.reduce((sum,a)=>sum+garage.filter(x=>String(x.carId)===String(a.carId)).length,0)}));
+    makeGroups.sort((a,b)=>a.make.localeCompare(b.make,undefined,{sensitivity:"base"}));
+    const rows=[];
+    makeGroups.forEach(g=>{
+        const groupRow=document.createElement("tr");
+        groupRow.className="snapshot-make-header";groupRow.dataset.make=g.make;
+        const expanded=expandedSnapshotMakes.has(g.make);
+        groupRow.setAttribute("aria-expanded",String(expanded));
+        groupRow.innerHTML=`<td colspan="8"><div class="snapshot-make-summary"><span class="snapshot-make-arrow">${expanded?"▼":"▶"}</span><span>${escapeHtml(g.make)}</span><span class="snapshot-make-stats">| ${g.uniqueCars} Unique Cars | ${g.observations} Observations | ${g.garage} Garage</span></div></td>`;
+        rows.push(groupRow);
+        const byCar=new Map();
+        g.items.forEach(a=>{if(!byCar.has(a.carId))byCar.set(a.carId,[]);byCar.get(a.carId).push(a)});
+        const childRows=[...byCar.entries()].map(([id,items])=>{
+            const c=getCar(id)||{};
+            const knownWins=items.map(a=>{
+                const outcome=a.outcome||"Active";
+                if(a.winningBid!=null&&Number.isFinite(Number(a.winningBid))){const value=Number(a.winningBid);return {value,isBuyout:a.buyout!=null&&value===Number(a.buyout)}}
+                if(outcome==="Sold"&&a.highestBid!=null&&Number.isFinite(Number(a.highestBid))){const value=Number(a.highestBid);return {value,isBuyout:a.buyout!=null&&value===Number(a.buyout)}}
+                if(outcome==="Buyout Sold"&&a.buyout!=null&&Number.isFinite(Number(a.buyout)))return {value:Number(a.buyout),isBuyout:true};
+                return null;
+            }).filter(Boolean);
+            const marketWins=knownWins.filter(w=>!w.isBuyout),values=marketWins.map(w=>w.value),low=values.length?Math.min(...values):null,high=values.length?Math.max(...values):null;
+            const buyoutSales=knownWins.filter(w=>w.isBuyout).length,bidSales=knownWins.filter(w=>!w.isBuyout).length;
+            const buyouts=items.map(a=>{if(a.buyout!=null&&Number.isFinite(Number(a.buyout)))return Number(a.buyout);if(a.outcome==="Buyout Sold"&&a.winningBid!=null&&Number.isFinite(Number(a.winningBid)))return Number(a.winningBid);return null}).filter(v=>v!=null);
+            const buyout=buyouts.length?Math.min(...buyouts):null;
+            const sales=`<span class="sale-split"><span class="sale-buyout">${buyoutSales} Buyout</span><span class="sale-bid">${bidSales} Bid</span></span>`;
+            const row=document.createElement("tr");row.className=`snapshot-row snapshot-child-row${expanded?"":" is-hidden"}`;row.dataset.carId=id;row.dataset.make=g.make;
+            row.dataset.sortVehicle=(c.name||"Unknown").toLowerCase();row.dataset.sortSource=(c.unlockMethod||"").toLowerCase();row.dataset.sortAutoshow=String(c.autoshowValue??0);row.dataset.sortLow=String(low??0);row.dataset.sortHigh=String(high??0);row.dataset.sortBuyout=String(buyout??0);row.dataset.sortSales=String(buyoutSales+bidSales);row.dataset.sortGarage=String(garageCountForCar(id));
+            row.innerHTML=`<td>${escapeHtml(c.name||"Unknown")} <span class="click-hint">(${items.length} observed)</span></td><td title="${escapeHtml(c.unlockMethod||"")}">${escapeHtml(c.unlockMethod||"—")}</td><td class="snapshot-price">${money(c.autoshowValue)}</td><td class="snapshot-price">${money(low)}</td><td class="snapshot-high">${money(high)}</td><td>${money(buyout)}</td><td>${sales}</td><td>${garageCountForCar(id)}</td>`;
+            return row;
+        });
+        childRows.sort((a,b)=>a.dataset.sortVehicle.localeCompare(b.dataset.sortVehicle,undefined,{numeric:true,sensitivity:"base"}));
+        rows.push(...childRows);
+    });
+    body.replaceChildren(...rows);
+}
+
+function sortMarketSnapshot(key){
+    // Manufacturer grouping is intentionally alphabetical; keep the existing function for compatibility with older UI hooks.
+    if(key!=="vehicle")return;
+    const rows=[...document.querySelectorAll("#auctionSnapshotBody .snapshot-make-header")];
+    const dir=marketSnapshotSort.key===key&&marketSnapshotSort.order==="asc"?-1:1;
+    marketSnapshotSort={key,order:dir===1?"asc":"desc"};
+    rows.sort((a,b)=>dir*a.dataset.make.localeCompare(b.dataset.make,undefined,{sensitivity:"base"}));
+    // Re-rendering from the current data keeps child rows attached to their manufacturer groups.
+    renderAuctions();
+}
+function auctionTimerSecondsFromInputs(){const h=Math.max(0,Math.min(24,Number(document.getElementById("auctionTimerHours").value)||0));const m=Math.max(0,Math.min(59,Number(document.getElementById("auctionTimerMinutes").value)||0));const sec=Math.max(0,Math.min(59,Number(document.getElementById("auctionTimerSeconds").value)||0));return Math.min(86400,h*3600+m*60+sec)}
+function setAuctionTimerInputs(total){total=Math.max(0,Math.min(86400,Number(total)||0));document.getElementById("auctionTimerHours").value=Math.floor(total/3600);document.getElementById("auctionTimerMinutes").value=Math.floor((total%3600)/60);document.getElementById("auctionTimerSeconds").value=total%60;updateAuctionTimerDisplay()}
+function updateAuctionTimerDisplay(){const seconds=auctionTimerSecondsFromInputs();const display=document.getElementById("auctionTimerDisplay");display.textContent=seconds?formatCountdown(seconds):"No timer set"}
+let auctionViewMode="live";
+const expandedAuctionYears=new Set();
+const expandedAuctionMonths=new Set();
+const expandedAuctionDays=new Set();
+function auctionRemainingSeconds(a){
+    if(!a.timerEndsAt)return null;
+    return Math.max(0,Math.ceil((a.timerEndsAt-Date.now())/1000));
+}
+function isLiveAuction(a){
+    const label=liveAuctionStatus(a).label;
+    return label==="Active"||label==="Potentially Sold";
+}
+function liveAuctionStatus(a){
+    const explicit=a.outcome||"Active";
+    if(explicit==="Unsold / Expired")return {label:"Unsold / Expired",cls:"status-expired",timer:""};
+    if(explicit==="Auction Ended — Result Unknown")return {label:"Auction Ended — Result Unknown",cls:"status-expired",timer:""};
+    if(explicit==="Sold")return {label:"Sold",cls:"status-sold",timer:""};
+    if(explicit==="Buyout Sold")return {label:"Buyout Sold",cls:"status-sold",timer:""};
+    if(explicit==="Potentially Sold")return {label:"Potentially Sold",cls:"status-potential",timer:a.timerEndsAt?formatCountdown(Math.max(0,Math.ceil((a.timerEndsAt-Date.now())/1000))):""};
+    if(a.timerEndsAt){
+        const left=Math.max(0,Math.ceil((a.timerEndsAt-Date.now())/1000));
+        if(left>0)return {label:"Active",cls:"status-active",timer:formatCountdown(left)};
+        return {label:"Auction Ended — Result Unknown",cls:"status-expired",timer:"00:00:00"};
+    }
+    return {label:"Active",cls:"status-active",timer:""};
+}
+
+function auctionDateParts(value){
+    const raw=String(value||"");
+    const m=raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m)return {year:m[1],month:m[2],day:m[3],key:`${m[1]}-${m[2]}-${m[3]}`};
+    const d=new Date(value);
+    if(!Number.isNaN(d.getTime())){
+        const year=String(d.getFullYear()),month=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
+        return {year,month,day,key:`${year}-${month}-${day}`};
+    }
+    return {year:"Unknown",month:"00",day:"00",key:"Unknown-00-00"};
+}
+function auctionMonthName(month){
+    if(month==="00")return "Unknown Month";
+    return new Date(2000,Number(month)-1,1).toLocaleString(undefined,{month:"long"});
+}
+function auctionDayLabel(day,month,year){
+    if(day==="00")return "Unknown Day";
+    const d=new Date(Number(year),Number(month)-1,Number(day));
+    return d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+}
+function renderCompletedAuctionGroups(list){
+    const body=document.getElementById("auctionBody");
+    const years=new Map();
+    list.forEach(a=>{
+        const p=auctionDateParts(a.date);
+        if(!years.has(p.year))years.set(p.year,new Map());
+        const months=years.get(p.year);
+        if(!months.has(p.month))months.set(p.month,new Map());
+        const days=months.get(p.month);
+        if(!days.has(p.key))days.set(p.key,[]);
+        days.get(p.key).push(a);
+    });
+    const rows=[];
+    const yearKeys=[...years.keys()].sort((a,b)=>b.localeCompare(a));
+    yearKeys.forEach(year=>{
+        const months=years.get(year),yearExpanded=expandedAuctionYears.has(year);
+        const yearCount=[...months.values()].reduce((sum,days)=>sum+[...days.values()].reduce((n,items)=>n+items.length,0),0);
+        const yr=document.createElement("tr");yr.className="auction-date-group auction-year-group";yr.dataset.year=year;
+        yr.innerHTML=`<td colspan="10"><span class="group-arrow">${yearExpanded?"▼":"▶"}</span><span class="group-label">${escapeHtml(year)}</span><span class="group-count">${yearCount} observation${yearCount===1?"":"s"}</span></td>`;
+        rows.push(yr);
+        if(!yearExpanded)return;
+        const monthKeys=[...months.keys()].sort((a,b)=>b.localeCompare(a));
+        monthKeys.forEach(month=>{
+            const days=months.get(month),monthKey=`${year}-${month}`,monthExpanded=expandedAuctionMonths.has(monthKey);
+            const monthCount=[...days.values()].reduce((n,items)=>n+items.length,0);
+            const mr=document.createElement("tr");mr.className="auction-date-group auction-month-group";mr.dataset.month=monthKey;
+            mr.innerHTML=`<td colspan="10"><span class="group-arrow">${monthExpanded?"▼":"▶"}</span><span class="group-label">${escapeHtml(auctionMonthName(month))}</span><span class="group-count">${monthCount} observation${monthCount===1?"":"s"}</span></td>`;
+            rows.push(mr);
+            if(!monthExpanded)return;
+            const dayKeys=[...days.keys()].sort((a,b)=>b.localeCompare(a));
+            dayKeys.forEach(dayKey=>{
+                const items=days.get(dayKey),dayExpanded=expandedAuctionDays.has(dayKey);
+                const p=auctionDateParts(dayKey),dr=document.createElement("tr");
+                dr.className="auction-date-group auction-day-group";dr.dataset.day=dayKey;
+                dr.innerHTML=`<td colspan="10"><span class="group-arrow">${dayExpanded?"▼":"▶"}</span><span class="group-label">${escapeHtml(auctionDayLabel(p.day,p.month,p.year))}</span><span class="group-count">${items.length} observation${items.length===1?"":"s"}</span></td>`;
+                rows.push(dr);
+                if(!dayExpanded)return;
+                items.sort((a,b)=>new Date(b.date)-new Date(a.date));
+                items.forEach(a=>{
+                    const c=getCar(a.carId)||{},status=liveAuctionStatus(a),row=document.createElement("tr");
+                    row.className="auction-row";row.dataset.id=a.id;row.title="Click to view full observation details";
+                    row.innerHTML=`<td>${escapeHtml(fmtDate(a.date))}</td><td class="vehicle-cell"><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""} · ${c.stockClass||""}${c.stockPi||"—"}</small></td><td class="source-cell" title="${escapeHtml(c.unlockMethod||"")}">${escapeHtml(c.unlockMethod||"—")}</td><td class="price-cell">${money(a.startingBid)}</td><td class="price-cell">${money(a.highestBid)}</td><td class="win-cell">${money(a.winningBid)}</td><td class="price-cell">${money(a.buyout)}</td><td>${piMarkup(a.auctionPi)}</td><td class="auction-status ${status.cls}">${status.timer?`<span class="auction-timer">⏱ ${status.timer}</span>`:""}<span>${escapeHtml(status.label)}</span></td><td>${isLiveAuction(a)&&a.buyout!=null?`<button class="icon-btn buyout-auction" data-id="${a.id}" type="button" aria-label="Record buyout sold" title="Record Buyout Sold">⚡</button>`:""}<button class="icon-btn edit-auction" data-id="${a.id}" type="button" aria-label="View or edit observation">✎</button><button class="icon-btn delete-auction" data-id="${a.id}" type="button" aria-label="Delete observation">×</button></td>`;
+                    rows.push(row);
+                });
+            });
+        });
+    });
+    body.replaceChildren(...rows);
+}
+function renderAuctions(){
+    const body=document.getElementById("auctionBody"),q=document.getElementById("auctionSearch").value.toLowerCase().trim(),filter=document.getElementById("auctionOutcome").value;
+    const matches=auctions.filter(a=>{const c=getCar(a.carId);const text=`${c?.name||""} ${c?.year||""} ${c?.unlockMethod||""} ${a.notes||""}`.toLowerCase();return !q||text.includes(q)});
+    renderMarketSnapshot(matches);
+    const liveCount=matches.filter(isLiveAuction).length;
+    const completedCount=matches.length-liveCount;
+    document.getElementById("auctionLiveCount").textContent=liveCount;
+    document.getElementById("auctionCompletedCount").textContent=completedCount;
+    let list=matches.filter(a=>auctionViewMode==="live"?isLiveAuction(a):!isLiveAuction(a));
+    list=list.filter(a=>{const live=liveAuctionStatus(a).label;return !filter||a.outcome===filter||live===filter});
+    if(auctionViewMode==="live"){
+        list.sort((a,b)=>{const ar=auctionRemainingSeconds(a),br=auctionRemainingSeconds(b);if(ar!=null&&br!=null)return ar-br;if(ar!=null)return -1;if(br!=null)return 1;return new Date(b.date)-new Date(a.date)});
+        body.innerHTML=list.map(a=>{const c=getCar(a.carId)||{},status=liveAuctionStatus(a);return `<tr class="auction-row" data-id="${a.id}" title="Click to view full observation details"><td>${escapeHtml(fmtDate(a.date))}</td><td class="vehicle-cell"><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""} · ${c.stockClass||""}${c.stockPi||"—"}</small></td><td class="source-cell" title="${escapeHtml(c.unlockMethod||"")}">${escapeHtml(c.unlockMethod||"—")}</td><td class="price-cell">${money(a.startingBid)}</td><td class="price-cell">${money(a.highestBid)}</td><td class="win-cell">${money(a.winningBid)}</td><td class="price-cell">${money(a.buyout)}</td><td>${piMarkup(a.auctionPi)}</td><td class="auction-status ${status.cls}">${status.timer?`<span class="auction-timer">⏱ ${status.timer}</span>`:""}<span>${escapeHtml(status.label)}</span></td><td>${isLiveAuction(a)&&a.buyout!=null?`<button class="icon-btn buyout-auction" data-id="${a.id}" type="button" aria-label="Record buyout sold" title="Record Buyout Sold">⚡</button>`:""}<button class="icon-btn edit-auction" data-id="${a.id}" type="button" aria-label="View or edit observation">✎</button><button class="icon-btn delete-auction" data-id="${a.id}" type="button" aria-label="Delete observation">×</button></td></tr>`}).join("");
+    }else{
+        renderCompletedAuctionGroups(list);
+    }
+    document.getElementById("auctionEmpty").style.display=list.length?"none":"block";document.getElementById("auctionBadge").textContent=auctions.length;updateDashboard();
+}
+
+function populateMyAuctionCarSelect(){const search=document.getElementById("myAuctionCarSearch");if(search)search.value="";populateCarCombo("myAuctionCarSearch","myAuctionCar","myAuctionCarList")}
+function timerSecondsFromInputs(){const h=Math.max(0,Math.min(24,Number(document.getElementById("timerHours").value)||0));const m=Math.max(0,Math.min(59,Number(document.getElementById("timerMinutes").value)||0));const s=Math.max(0,Math.min(59,Number(document.getElementById("timerSeconds").value)||0));return Math.min(86400,h*3600+m*60+s)}
+function setTimerInputs(total){total=Math.max(0,Math.min(86400,Number(total)||0));document.getElementById("timerHours").value=Math.floor(total/3600);document.getElementById("timerMinutes").value=Math.floor((total%3600)/60);document.getElementById("timerSeconds").value=total%60;updateMyAuctionTimerDisplay()}
+function updateMyAuctionTimerDisplay(){const listed=document.getElementById("myAuctionListedAt").value;const seconds=timerSecondsFromInputs();const end=listed&&seconds>0?new Date(listed).getTime()+seconds*1000:null;const display=document.getElementById("myAuctionTimerDisplay");if(!end){display.textContent="No timer set";return}const left=Math.max(0,Math.ceil((end-Date.now())/1000));display.textContent=left>0?formatCountdown(left):"Auction timer expired"}
+function formatCountdown(total){const s=Math.max(0,Math.floor(total));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`}
+function updateRetentionDisplay(listedAt){const el=document.getElementById("retentionDisplay");if(!el)return;const end=new Date(listedAt).getTime()+60*24*60*60*1000;const left=Math.ceil((end-Date.now())/1000);if(left>0){const days=Math.floor(left/86400),hours=Math.floor((left%86400)/3600);el.textContent=`60-day car retrieval reminder: ${days} day${days===1?"":"s"} ${hours}h remaining`;}else el.textContent="⚠ 60-day car retrieval reminder: retrieve/relist the car now"}
+async function normalizeChecklistPriorities(){let changed=false;for(const rec of checklist){if(["High","Medium","Low"].includes(rec.priority))continue;const n=Number(rec.priority);if(Number.isFinite(n)&&n>0){rec.priority=n===1?"High":n===2?"Medium":"Low";await put("checklist",rec);changed=true}}if(changed)checklist=await getAll("checklist");return changed}
+async function migrateFH4CarIds(){
+    if(activeGame!=="FH4")return false;
+    const staticCars=getStaticCars();
+    if(!staticCars.length)return false;
+    const idMap=new Map();
+    for(const c of staticCars){
+        const id=String(c.id||"");
+        const m=id.match(/^FH4-(\d+)$/i);
+        if(m)idMap.set(`car-${Number(m[1])}`,id);
+    }
+    if(!idMap.size)return false;
+    let changed=false;
+    for(const storeName of ["auctions","garage","myAuctions"]){
+        const records=await getAll(storeName);
+        for(const rec of records){
+            const oldId=String(rec.carId||"");
+            const newId=idMap.get(oldId);
+            if(!newId||newId===oldId)continue;
+            rec.carId=newId;
+            await put(storeName,rec);
+            changed=true;
+        }
+    }
+    const checklistRecords=await getAll("checklist");
+    for(const rec of checklistRecords){
+        const oldId=String(rec.carId||"");
+        const newId=idMap.get(oldId);
+        if(!newId||newId===oldId)continue;
+        const existing=checklistRecords.find(x=>String(x.carId)===newId);
+        if(existing){
+            const merged={...existing};
+            for(const [key,value] of Object.entries(rec)){
+                if(key!=="carId"&&(merged[key]===undefined||merged[key]===null||merged[key]===""||merged[key]===false))merged[key]=value;
+            }
+            await put("checklist",merged);
+            await deleteStoreRecord("checklist",rec.carId);
+        }else{
+            rec.carId=newId;
+            await put("checklist",rec);
+            await deleteStoreRecord("checklist",oldId);
+        }
+        changed=true;
+    }
+    return changed;
+}
+async function normalizeExpiredMyAuctions(){let changed=false;const now=Date.now();for(const a of myAuctions){if(a.outcome==="Active"&&Number(a.timerSeconds)>0&&a.listedAt){const end=new Date(a.listedAt).getTime()+Number(a.timerSeconds)*1000;if(Number.isFinite(end)&&end<=now){a.outcome="Expired — Result Unknown";a.timerSeconds=0;await put("myAuctions",a);changed=true}}}if(changed)myAuctions=await getAll("myAuctions");return changed}
+function renderMyAuctions(){const body=document.getElementById("myAuctionBody"),q=document.getElementById("myAuctionSearch").value.toLowerCase().trim(),filter=document.getElementById("myAuctionStatus").value;const list=myAuctions.filter(a=>{const c=getCar(a.carId);const text=`${c?.name||""} ${c?.year||""} ${a.notes||""}`.toLowerCase();const isTerminal=["Sold","Buyout Sold","Did Not Sell","Expired — Result Unknown"].includes(a.outcome);const statusMatch=!filter||(filter==="history"?isTerminal:a.outcome===filter);return(!q||text.includes(q))&&statusMatch}).sort((a,b)=>new Date(b.listedAt)-new Date(a.listedAt));body.innerHTML=list.map(a=>{const c=getCar(a.carId)||{};const terminal=["Sold","Buyout Sold","Did Not Sell","Expired — Result Unknown"].includes(a.outcome);const left=!terminal&&a.timerSeconds&&a.listedAt?Math.max(0,Math.ceil((new Date(a.listedAt).getTime()+a.timerSeconds*1000-Date.now())/1000)):null;const timer=terminal?"Ended":left==null?"—":left>0?formatCountdown(left):"Expired";const retention=a.retentionReminder&&a.listedAt?Math.max(0,Math.ceil((new Date(a.listedAt).getTime()+60*24*60*60*1000-Date.now())/1000)):null;const retentionText=retention==null?"":retention>0?`${Math.floor(retention/86400)}d left`:`⚠ retrieve/relist`;const cls=a.outcome==="Did Not Sell"||a.outcome==="Expired — Result Unknown"?"status-unsold":a.outcome==="Active"?"status-active":"status-sold";return `<tr class="my-auction-row" data-id="${a.id}" title="Click to view or edit"><td>${escapeHtml(fmtDate(a.listedAt))}</td><td class="vehicle-cell"><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""}</small></td><td class="price-cell">${money(a.startingBid)}</td><td class="price-cell">${money(a.highestBid)}</td><td class="win-cell">${money(a.winningBid)}</td><td class="price-cell">${money(a.buyout)}</td><td class="timer-live">${timer}<small class="retention">${escapeHtml(retentionText)}</small></td><td class="${cls}">${escapeHtml(a.outcome||"Active")}</td><td><button class="icon-btn edit-my-auction" data-id="${a.id}" type="button">✎</button>${terminal?`<button class="icon-btn relist-my-auction" data-id="${a.id}" type="button" title="Relist this car">↻ Relist</button>`:""}<button class="icon-btn delete-my-auction" data-id="${a.id}" type="button">×</button></td></tr>`}).join("");document.getElementById("myAuctionEmpty").style.display=list.length?"none":"block";document.getElementById("myAuctionBadge").textContent=myAuctions.length}
+function openMyAuctionModal(a){const modal=document.getElementById("myAuctionModal"),form=document.getElementById("myAuctionForm");form.reset();document.getElementById("myAuctionId").value=a?.id??"";document.getElementById("myAuctionModalTitle").textContent=a?"View / Edit My Auction":"Add My Auction";document.getElementById("myAuctionListedAt").value=localDateTimeInputValue(a?.listedAt);if(a){document.getElementById("myAuctionCar").value=a.carId;syncCarCombo("myAuctionCarSearch","myAuctionCar","myAuctionCarList");document.getElementById("myAuctionStart").value=a.startingBid??"";document.getElementById("myAuctionHighest").value=a.highestBid??"";document.getElementById("myAuctionWinning").value=a.winningBid??"";document.getElementById("myAuctionBuyout").value=a.buyout??"";document.getElementById("myAuctionOutcome").value=a.outcome||"Active";document.getElementById("myAuctionNotes").value=a.notes||"";setTimerInputs(a.timerSeconds||0);document.getElementById("myAuctionRetentionReminder").checked=!!a.retentionReminder;if(a.retentionReminder&&a.listedAt)updateRetentionDisplay(a.listedAt);else document.getElementById("retentionDisplay").textContent="No 60-day reminder set"}else {setTimerInputs(0);document.getElementById("myAuctionRetentionReminder").checked=false;document.getElementById("retentionDisplay").textContent="No 60-day reminder set";populateCarCombo("myAuctionCarSearch","myAuctionCar","myAuctionCarList")};modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal);updateMyAuctionTimerDisplay();document.getElementById("myAuctionCarSearch").focus()}
+function closeMyAuctionModal(){document.getElementById("myAuctionModal").classList.remove("show");document.getElementById("myAuctionModal").setAttribute("aria-hidden","true")}
+async function relistMyAuction(id){const a=myAuctions.find(x=>String(x.id)===String(id));if(!a)return;if(!confirm("Relist this car using the same Start Bid, Buyout, notes, and retention reminder?"))return;const relisted={...a};delete relisted.id;relisted.listedAt=localDateTimeInputValue();relisted.highestBid=null;relisted.winningBid=null;relisted.outcome="Active";relisted.timerSeconds=Number(a.timerSeconds)||0;await put("myAuctions",relisted);myAuctions=await getAll("myAuctions");renderMyAuctions();}
+async function saveMyAuction(e){e.preventDefault();selectCarFromCombo("myAuctionCarSearch","myAuctionCar","myAuctionCarList");if(!document.getElementById("myAuctionCar").value){alert("Please select a vehicle.");return;}const id=document.getElementById("myAuctionId").value;const a={};if(id)a.id=Number(id);a.carId=document.getElementById("myAuctionCar").value;a.listedAt=document.getElementById("myAuctionListedAt").value;a.startingBid=numOrNull("myAuctionStart");a.highestBid=numOrNull("myAuctionHighest");a.winningBid=numOrNull("myAuctionWinning");a.buyout=numOrNull("myAuctionBuyout");a.outcome=document.getElementById("myAuctionOutcome").value;if(a.winningBid!=null&&a.buyout!=null&&a.winningBid===a.buyout)a.outcome="Buyout Sold";a.timerSeconds=["Sold","Buyout Sold","Did Not Sell"].includes(a.outcome)?0:timerSecondsFromInputs();a.retentionReminder=document.getElementById("myAuctionRetentionReminder").checked;a.notes=document.getElementById("myAuctionNotes").value.trim();await put("myAuctions",a);myAuctions=await getAll("myAuctions");closeMyAuctionModal();renderMyAuctions()}
+function updateGarageTargetStatus(){const status=document.getElementById("garageTargetStatusText"),targetField=document.getElementById("garageTargetPiField"),difference=document.getElementById("garagePiDifference"),stockDisplay=document.getElementById("garageStockPiDisplay"),targetClass=document.getElementById("garageTargetPiClass");const c=getCar(document.getElementById("garageCar")?.value);const stock=c?.stockPi??null;const current=numOrNull("garageCurrentPi");const target=activeGame==="FH6"?numOrNull("garageTargetPi"):null;if(stockDisplay)stockDisplay.innerHTML=piMarkup(stock);if(targetField)targetField.style.display=activeGame==="FH6"?"flex":"none";if(targetClass){const cls=target!=null?classFromPi(target):"D";targetClass.textContent=cls;targetClass.className=`pi-class ${piClassKey(cls)} pi-entry-class`;}if(difference){if(current!=null&&target!=null){const delta=current-target;difference.innerHTML=`Current vs Target: <strong>${delta>0?"+":""}${delta} PI</strong>`;}else difference.innerHTML="Current vs Target: —";}if(!status)return;if(activeGame!=="FH6"||target==null||current==null){status.textContent=activeGame==="FH6"?"Target status: —":"";status.className="garage-pi-status-text unknown";return}const pass=current>=target;status.textContent=`Target status: Current ${pass?"meets or exceeds":"is below"} target`;status.className=`garage-pi-status-text ${pass?"pass":"under"}`;}
+function updateGarageCarTypeDisplay(){
+    const el=document.getElementById("garageCarType");
+    if(!el)return;
+    const c=getCar(document.getElementById("garageCar")?.value);
+    if(activeGame!=="FH6"&&activeGame!=="FH5"){el.style.display="none";el.textContent="";return}
+    el.style.display="block";
+    el.innerHTML=`Car Type: <strong>${escapeHtml(garageCarType(c)||"—")}</strong>`;
+}
+function populateGarageCarSelect(){
+    const search=document.getElementById("garageCarSearch");
+    if(search)search.value="";
+    filterCarOptions("garageCarSearch","garageCar");
+    updateGarageCarTypeDisplay();
+}
+function updateGarageCalc(){const c=getCar(document.getElementById("garageCar").value);if(!c)return;const autoshow=c.autoshowValue??c.autoshow_value??null;const purchased=numOrNull("garagePurchased"),total=numOrNull("garageTotal"),parts=numOrNull("garageParts");document.getElementById("garageCalc").textContent=`Autoshow: ${money(autoshow)} · Purchased: ${money(purchased)} · Total value: ${money(total)} · Parts value: ${money(parts)} · Difference vs Autoshow: ${total!=null&&autoshow!=null?money((Number(total)+(Number(parts)||0))-Number(autoshow)):"—"} · Appreciated: ${money(numOrNull("garageAppreciation"))}`;updateGarageTargetStatus();}
+function classFromPi(pi){const n=Number(pi);if(!Number.isFinite(n))return "—";if(n>=999)return "X";if(n>=900)return "S2";if(n>=800)return "S1";if(n>=700)return "A";if(n>=600)return "B";if(n>=500)return "C";return "D"}
+function piClassKey(cls){return String(cls||"D").toLowerCase().replace("s1","s1").replace("s2","s2")}
+function piMarkup(pi){const n=Number(pi);if(!Number.isFinite(n))return "—";const cls=classFromPi(n);return `<span class="pi"><span class="pi-class ${piClassKey(cls)}">${escapeHtml(cls)}</span><span class="pi-num">${n}</span></span>`}
+function updateGaragePiClass(){const input=document.getElementById("garageCurrentPi"),badge=document.getElementById("garageCurrentPiClass");if(!input||!badge)return;const n=Number(input.value);const cls=Number.isFinite(n)&&input.value!==""?classFromPi(n):"D";badge.textContent=cls;badge.className=`pi-class ${piClassKey(cls)} pi-entry-class`;}
+let expandedGarageMakes=new Set();
+function garagePiStatusMarkup(g,c){
+    if(activeGame!=="FH6")return "";
+    const target=Number(g?.targetPi);
+    const current=Number(g?.currentPi);
+    if(!Number.isFinite(target)||!Number.isFinite(current))return `<span class="garage-pi-status unknown" title="Target PI not available"></span>`;
+    return `<span class="garage-pi-status ${current>=target?"pass":"under"}" title="${current>=target?"Current PI meets or exceeds target":"Current PI is below target"}"></span>`;
+}
+
+let garageSortKey="vehicle";
+let garageSortDir="asc";
+function garageStaticCar(c){
+    if(!c)return null;
+    if(activeGame!=="FH6"&&activeGame!=="FH5")return c;
+    if(c.carType||c.car_type)return c;
+    const staticCars=activeGame==="FH5"?(window.FH5_CAR_DATABASE||[]):(window.FH6_CAR_DATABASE||[]);
+    return staticCars.find(sc=>String(sc.id)===String(c.id))||c;
+}
+function garageCarType(c){const source=garageStaticCar(c);return source?.carType??source?.car_type??"";}
+function populateGarageCarTypeFilter(){
+    const select=document.getElementById("garageCarTypeFilter");
+    if(!select)return;
+    const current=select.value;
+    if(activeGame!=="FH6"&&activeGame!=="FH5"){select.innerHTML=`<option value="">All Car Types</option>`;select.style.display="none";return;}
+    const staticCars=activeGame==="FH5"?(window.FH5_CAR_DATABASE||[]):(window.FH6_CAR_DATABASE||[]);
+    const types=[...new Set(staticCars.map(c=>c.carType??c.car_type).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:"base"}));
+    select.innerHTML=`<option value="">All Car Types</option>`+types.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+    select.value=types.includes(current)?current:"";select.style.display="";
+}
+function compareGarageValues(a,b,key){
+    const ca=garageStaticCar(getCar(a.carId))||{},cb=garageStaticCar(getCar(b.carId))||{};let av,bv;
+    if(key==="vehicle"){av=`${ca.name||""} ${ca.year||0}`;bv=`${cb.name||""} ${cb.year||0}`;}else if(key==="date"){av=String(a.date||"");bv=String(b.date||"");}else if(key==="carType"){av=garageCarType(ca);bv=garageCarType(cb);}else if(key==="stockPi"){av=Number(ca.stockPi??-1);bv=Number(cb.stockPi??-1);}else if(key==="currentPi"){av=Number(a.currentPi??-1);bv=Number(b.currentPi??-1);}else if(key==="targetPi"){av=Number(a.targetPi??-1);bv=Number(b.targetPi??-1);}else if(key==="autoshow"){av=Number(a.autoshowPrice??ca.autoshowValue??ca.autoshow_value??-1);bv=Number(b.autoshowPrice??cb.autoshowValue??cb.autoshow_value??-1);}else if(key==="purchased"){av=Number(a.purchasedPrice??-1);bv=Number(b.purchasedPrice??-1);}else if(key==="total"){av=Number(a.totalValue??-1);bv=Number(b.totalValue??-1);}else if(key==="parts"){av=Number(a.partsValue??-1);bv=Number(b.partsValue??-1);}else if(key==="appreciated"){av=Number(a.appreciationValue??-1);bv=Number(b.appreciationValue??-1);}
+    if(typeof av==="number"&&typeof bv==="number")return av-bv;return String(av).localeCompare(String(bv),undefined,{numeric:true,sensitivity:"base"});
+}
+function sortGarageTable(th){const key=th?.dataset?.garageSort;if(!key)return;if(garageSortKey===key)garageSortDir=garageSortDir==="asc"?"desc":"asc";else{garageSortKey=key;garageSortDir="asc";}renderGarage();}
+
+function updateGarageTableHeader(){
+    const table=document.getElementById("garageTable");
+    if(!table)return;
+    const thead=table.querySelector("thead");
+    if(!thead)return;
+    const fh6=activeGame==="FH6";
+    const hasCarType=fh6||activeGame==="FH5";
+    thead.innerHTML=`<tr><th data-garage-sort="date">Date</th><th data-garage-sort="vehicle">Vehicle</th>${hasCarType?'<th data-garage-sort="carType">Car Type</th>':''}<th data-garage-sort="stockPi">Stock</th><th data-garage-sort="currentPi">Current</th>${fh6?'<th data-garage-sort="targetPi">Target PI</th>':''}<th data-garage-sort="autoshow">Autoshow</th><th data-garage-sort="purchased">Purchased</th><th data-garage-sort="total">Total Car Value</th><th data-garage-sort="parts">Parts Value</th><th data-garage-sort="appreciated">Appreciated Value</th><th></th></tr>`;
+    thead.querySelectorAll("th[data-garage-sort]").forEach(th=>th.addEventListener("click",()=>sortGarageTable(th)));
+}
+function renderGarage(){
+    const fh6=activeGame==="FH6";
+    const hasCarType=fh6||activeGame==="FH5";
+    updateGarageTableHeader();
+    populateGarageCarTypeFilter();
+    const body=document.getElementById("garageBody"),q=document.getElementById("garageSearch").value.toLowerCase().trim(),typeFilter=document.getElementById("garageCarTypeFilter")?.value||"";
+    const filtered=garage.filter(g=>{const c=garageStaticCar(getCar(g.carId))||{};const text=`${c.name||""} ${c.year||""}`.toLowerCase();const type=garageCarType(c);return(!q||text.includes(q))&&(!typeFilter||type===typeFilter)});
+    const groups=new Map();filtered.forEach(g=>{const c=garageStaticCar(getCar(g.carId))||{};const make=carMake(c)||"Unknown Manufacturer";if(!groups.has(make))groups.set(make,[]);groups.get(make).push(g)});
+    const makes=[...groups.keys()].sort((a,b)=>{
+        if(garageSortKey==="vehicle")return a.localeCompare(b,undefined,{sensitivity:"base"});
+        const aItems=groups.get(a),bItems=groups.get(b);
+        const cmp=compareGarageValues(aItems[0],bItems[0],garageSortKey);
+        if(cmp)return garageSortDir==="desc"?-cmp:cmp;
+        return a.localeCompare(b,undefined,{sensitivity:"base"});
+    });const rows=[];
+    makes.forEach(make=>{const items=groups.get(make).sort((a,b)=>{const cmp=compareGarageValues(a,b,garageSortKey);if(cmp)return garageSortDir==="desc"?-cmp:cmp;return String(a.id||"").localeCompare(String(b.id||""),undefined,{numeric:true})});const expanded=expandedGarageMakes.has(make);const groupRow=document.createElement("tr");groupRow.className="garage-make-header";groupRow.dataset.make=make;groupRow.setAttribute("aria-expanded",String(expanded));groupRow.innerHTML=`<td colspan="${hasCarType?(fh6?12:11):10}"><div class="garage-make-summary"><span class="garage-make-arrow">${expanded?"▼":"▶"}</span><span>${escapeHtml(make)}</span><span class="garage-make-stats">| ${items.length} Garage ${items.length===1?"Record":"Records"}</span></div></td>`;rows.push(groupRow);items.forEach(g=>{const c=garageStaticCar(getCar(g.carId))||{};const garageAutoshow=g.autoshowPrice??c.autoshowValue??c.autoshow_value??null;const currentPi=g.currentPi??null;const row=document.createElement("tr");row.className=`garage-row garage-child-row${expanded?"":" is-hidden"}`;row.dataset.id=g.id;row.title="Click to view or edit garage details";row.innerHTML=`<td>${escapeHtml(fmtDate(g.date))}</td><td><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""} · ${c.stockClass||""}${c.stockPi??"—"}</small></td>${hasCarType?`<td><span class="garage-car-type">${escapeHtml(garageCarType(c)||"—")}</span></td>`:""}<td>${piMarkup(c.stockPi)}</td><td>${piMarkup(currentPi)}${garagePiStatusMarkup(g,c)}</td>${fh6?`<td>${piMarkup(g.targetPi)}</td>`:""}<td class="garage-value">${money(garageAutoshow)}</td><td class="garage-value">${money(g.purchasedPrice)}</td><td class="garage-value">${money(g.totalValue)}</td><td class="garage-parts">${money(g.partsValue)}</td><td class="garage-value">${money(g.appreciationValue)}</td><td><button class="icon-btn edit-garage" data-id="${g.id}" type="button" aria-label="View or edit garage details">✎</button><button class="icon-btn delete-garage" data-id="${g.id}" type="button" aria-label="Delete garage car">×</button></td>`;rows.push(row)})});
+    body.replaceChildren(...rows);document.getElementById("garageEmpty").style.display=filtered.length?"none":"block";const garageBadge=document.getElementById("garageBadge");if(garageBadge)garageBadge.textContent=garage.length;
+    document.querySelectorAll("#garageTable thead th[data-garage-sort]").forEach(th=>{th.classList.toggle("sort-asc",th.dataset.garageSort===garageSortKey&&garageSortDir==="asc");th.classList.toggle("sort-desc",th.dataset.garageSort===garageSortKey&&garageSortDir==="desc")});
+}
+
+function openCarEditModal(car){
+    const modal=document.getElementById("carEditModal");
+    if(!modal||!car)return;
+    document.getElementById("carEditId").value=car.id||"";
+    document.getElementById("carEditName").value=car.name??"";
+    document.getElementById("carEditYear").value=car.year??"";
+    document.getElementById("carEditRarity").value=car.rarity??"";
+    document.getElementById("carEditUnlock").value=car.unlockMethod??"";
+    document.getElementById("carEditValue").value=car.autoshowValue??"";
+    document.getElementById("carEditClass").value=car.stockClass??"";
+    document.getElementById("carEditPi").value=car.stockPi??"";
+    document.getElementById("carEditSpeed").value=car.speed??"";
+    document.getElementById("carEditHandling").value=car.handling??"";
+    document.getElementById("carEditAcceleration").value=car.acceleration??"";
+    document.getElementById("carEditLaunch").value=car.launch??"";
+    document.getElementById("carEditBraking").value=car.braking??"";
+    document.getElementById("carEditSourceUrl").value=car.sourceUrl??"";
+    document.getElementById("carEditImageRemote").value=car.imageRemote??car.image??"";
+    document.getElementById("carEditImageLocal").value=car.imageLocal??"";
+    document.getElementById("carEditModalTitle").textContent=`Edit Car · ${car.name||"Vehicle"}`;
+    modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal);
+}
+function closeCarEditModal(){const modal=document.getElementById("carEditModal");if(!modal)return;modal.classList.remove("show");modal.setAttribute("aria-hidden","true")}
+function nullableNumber(id){const v=document.getElementById(id).value.trim();if(v==="")return null;const n=Number(v);return Number.isFinite(n)?n:null}
+async function saveCarEdit(e){
+    e.preventDefault();
+    const id=document.getElementById("carEditId").value;
+    const car=getCar(id);
+    if(!car)return;
+    car.name=document.getElementById("carEditName").value.trim();
+    car.year=Number(document.getElementById("carEditYear").value);
+    car.rarity=document.getElementById("carEditRarity").value.trim();
+    car.unlockMethod=document.getElementById("carEditUnlock").value.trim();
+    car.autoshowValue=nullableNumber("carEditValue");
+    car.stockClass=document.getElementById("carEditClass").value.trim().toUpperCase();
+    car.stockPi=nullableNumber("carEditPi");
+    car.speed=nullableNumber("carEditSpeed");
+    car.handling=nullableNumber("carEditHandling");
+    car.acceleration=nullableNumber("carEditAcceleration");
+    car.launch=nullableNumber("carEditLaunch");
+    car.braking=nullableNumber("carEditBraking");
+    car.sourceUrl=document.getElementById("carEditSourceUrl").value.trim();
+    car.imageRemote=document.getElementById("carEditImageRemote").value.trim();
+    car.imageLocal=document.getElementById("carEditImageLocal").value.trim();
+    await put("cars",car);
+    cars=await getAll("cars");
+    markDatabaseChanged();
+    closeCarEditModal();
+    populateCarSelect();populateGarageCarSelect();populateMyAuctionCarSelect();
+    renderCarTable();renderGarage();renderAuctions();renderMyAuctions();renderChecklist();updateDashboard();
+}
+
+function resetModalScroll(modal){if(!modal)return;modal.scrollTop=0;const card=modal.querySelector(".modal-card");if(card)card.scrollTop=0;}
+function openGarageModal(g){const modal=document.getElementById("garageModal"),form=document.getElementById("garageForm");form.reset();populateGarageCarSelect();document.getElementById("garageId").value=g?.id??"";document.getElementById("garageModalTitle").textContent=g?"View / Edit Garage Car":"Add Garage Car";document.getElementById("garageDate").value=g?.date||localDateInputValue();document.getElementById("garageDuplicateCount").value="1";if(g){document.getElementById("garageCar").value=g.carId;document.getElementById("garagePurchased").value=g.purchasedPrice??"";document.getElementById("garageTotal").value=g.totalValue??"";document.getElementById("garageParts").value=g.partsValue??"";document.getElementById("garageAppreciation").value=g.appreciationValue??"";document.getElementById("garageCurrentPi").value=g.currentPi??g.pi??"";document.getElementById("garageTargetPi").value=g.targetPi??"";}updateGarageCarTypeDisplay();modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal);updateGaragePiClass();updateGarageCalc();document.getElementById("garageCar").focus()}
+function closeGarageModal(){document.getElementById("garageModal").classList.remove("show");document.getElementById("garageModal").setAttribute("aria-hidden","true")}
+async function saveGarage(e){
+    e.preventDefault();
+    const id=document.getElementById("garageId").value.trim();
+    const carId=document.getElementById("garageCar").value;
+    if(!carId){alert("Please select a vehicle.");return;}
+    const c=getCar(carId);
+    if(!c){alert("The selected vehicle could not be found.");return;}
+    const date=document.getElementById("garageDate").value||localDateInputValue();
+    const stockPi=c.stockPi??null;
+    const rawCount=parseInt(document.getElementById("garageDuplicateCount").value,10);
+    const count=id?1:Math.max(1,Math.min(100,Number.isFinite(rawCount)?rawCount:1));
+    const autoshowPrice=c.autoshowValue??c.autoshow_value??null;
+    try{
+        if(id){
+            const existing=garage.find(g=>String(g.id)===id);
+            if(!existing){alert("The garage record could not be found for editing.");return;}
+            const currentPi=numOrNull("garageCurrentPi");
+            const targetPi=activeGame==="FH6"?numOrNull("garageTargetPi"):null;
+            const purchasedPrice=numOrNull("garagePurchased");
+            const totalValue=numOrNull("garageTotal");
+            const partsValue=numOrNull("garageParts");
+            const appreciationValue=numOrNull("garageAppreciation");
+            const g={...existing,carId,date,pi:stockPi,stockPi,autoshowPrice,currentPi,targetPi,purchasedPrice,totalValue,partsValue,appreciationValue,differenceVsAutoshow:totalValue!=null&&autoshowPrice!=null?(Number(totalValue)+(Number(partsValue)||0))-Number(autoshowPrice):null,piDifference:currentPi!=null&&stockPi!=null?currentPi-stockPi:null};
+            await put("garage",g);
+        }else{
+            const currentPi=numOrNull("garageCurrentPi");
+            const targetPi=activeGame==="FH6"?numOrNull("garageTargetPi"):null;
+            const purchasedPrice=numOrNull("garagePurchased");
+            const totalValue=numOrNull("garageTotal");
+            const partsValue=numOrNull("garageParts");
+            const appreciationValue=numOrNull("garageAppreciation");
+            const record={carId,date,pi:stockPi,stockPi,autoshowPrice,currentPi,targetPi,piDifference:currentPi!=null&&stockPi!=null?currentPi-stockPi:null,purchasedPrice,totalValue,partsValue,appreciationValue,differenceVsAutoshow:totalValue!=null&&autoshowPrice!=null?(Number(totalValue)+(Number(partsValue)||0))-Number(autoshowPrice):null};
+            for(let i=0;i<count;i++)await put("garage",{...record});
+        }
+        const saved=await getAll("garage");
+        if(id&&!saved.some(g=>String(g.id)===id)){throw new Error("IndexedDB write completed but the record could not be read back.");}
+        if(!id&&saved.length<garage.length+count){throw new Error("IndexedDB write completed but the new garage record could not be read back.");}
+        garage=saved;
+        markDatabaseChanged();
+        closeGarageModal();
+        renderGarage();
+        renderAuctions();
+        updateDashboard();
+    }catch(err){
+        console.error("Garage save failed:",err);
+        alert(`Garage entry could not be saved.\n\n${err?.message||err}`);
+    }
+}
+
+function updateLiveCalc(){
+    const c=getCar(document.getElementById("auctionCar").value),pi=numOrNull("auctionPi");
+    if(!c)return;
+    const delta=pi!=null?pi-c.stockPi:null;
+    updateAuctionUpgradeStatus();
+    const status=document.getElementById("upgraded")?.value||"Unknown";
+    document.getElementById("liveCalc").textContent=`Base PI: ${c.stockClass}${c.stockPi} · Auction PI: ${pi!=null?pi:"—"} · PI change: ${delta==null?"—":signed(delta)} · Upgrade status: ${status}`;
+}
+function inferOutcome(highestBid,winningBid,buyout){
+    if(winningBid!=null){
+        if(buyout!=null&&winningBid===buyout)return "Buyout Sold";
+        return "Sold";
+    }
+    if(highestBid!=null){
+        if(buyout!=null&&highestBid===buyout)return "Buyout Sold";
+        return "Potentially Sold";
+    }
+    return "Active";
+}
+function autoSetOutcome(){
+    const outcome=document.getElementById("outcome");
+    if(outcome.dataset.manual==="true")return;
+    const highest=numOrNull("highestBid"),winning=numOrNull("winningBid"),buyout=numOrNull("buyout");
+    const inferred=inferOutcome(highest,winning,buyout);
+    outcome.value=inferred;
+}
+function openModal(a){
+    const modal=document.getElementById("auctionModal"),form=document.getElementById("auctionForm");
+    form.reset();
+    document.getElementById("auctionDuplicateCount").value="1";
+    document.getElementById("outcome").dataset.manual="false";
+    document.getElementById("auctionId").value=a?.id??"";
+    document.getElementById("modalTitle").textContent=a?"View / Edit Auction Observation":"Add Auction Observation";
+    document.getElementById("auctionDate").value=localDateTimeInputValue(a?.date);
+    const search=document.getElementById("auctionCarSearch");
+    if(search)search.value="";
+    populateCarCombo("auctionCarSearch","auctionCar","auctionCarList");
+    if(a){
+        document.getElementById("auctionCar").value=a.carId;
+        syncCarCombo("auctionCarSearch","auctionCar","auctionCarList");
+        document.getElementById("startingBid").value=a.startingBid??"";
+        document.getElementById("highestBid").value=a.highestBid??"";
+        document.getElementById("winningBid").value=a.winningBid??"";
+        document.getElementById("buyout").value=a.buyout??"";
+        document.getElementById("auctionPi").value=a.auctionPi??"";
+        updateAuctionUpgradeStatus();
+        document.getElementById("outcome").value=a.outcome||"Active";
+        document.getElementById("auctionBuyer").value=a.buyer||"";
+        document.getElementById("auctionNotes").value=a.notes||"";
+        const remaining=a.timerEndsAt?Math.max(0,Math.ceil((a.timerEndsAt-Date.now())/1000)):0;setAuctionTimerInputs(remaining);
+        document.getElementById("outcome").dataset.manual=["Unsold / Expired","Auction Ended — Result Unknown"].includes(a.outcome||"")?"true":"false";
+    }
+    if(!a){
+        setAuctionTimerInputs(0);
+        const firstCar=getCar(document.getElementById("auctionCar").value);
+        document.getElementById("auctionPi").value=firstCar?.stockPi??"";
+    }
+    modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal);updateLiveCalc();document.getElementById("auctionCar").focus()
+}
+
+function closeModal(){document.getElementById("auctionModal").classList.remove("show");document.getElementById("auctionModal").setAttribute("aria-hidden","true")}
+let pendingBuyoutAuctionId=null;
+function openBuyoutModal(id){
+    const a=auctions.find(x=>String(x.id)===String(id));
+    if(!a)return;
+    if(a.buyout==null||!Number.isFinite(Number(a.buyout))){
+        alert("This auction does not have a Buyout price recorded.");
+        return;
+    }
+    pendingBuyoutAuctionId=Number(id);
+    const c=getCar(a.carId)||{};
+    document.getElementById("buyoutConfirmText").innerHTML=`Record <strong>${escapeHtml(c.name||"this auction")}</strong> as Buyout Sold for <strong>${money(a.buyout)}</strong>?`;
+    document.getElementById("buyoutBuyer").value="";
+    const modal=document.getElementById("buyoutModal");
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden","false");
+    resetModalScroll(modal);
+}
+function closeBuyoutModal(){
+    pendingBuyoutAuctionId=null;
+    const modal=document.getElementById("buyoutModal");
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden","true");
+}
+async function confirmBuyout(){
+    const id=pendingBuyoutAuctionId;
+    if(id==null)return;
+    const a=auctions.find(x=>String(x.id)===String(id));
+    if(!a){closeBuyoutModal();return;}
+    const buyer=document.getElementById("buyoutBuyer").value||"";
+    a.outcome="Buyout Sold";
+    a.winningBid=Number(a.buyout);
+    a.highestBid=a.highestBid!=null?a.highestBid:Number(a.buyout);
+    a.timerEndsAt=null;
+    a.buyer=buyer;
+    const finalPrice=Number(a.winningBid);
+    if(buyer==="me"&&Number.isFinite(finalPrice)){
+        if(a.garageId){
+            const existing=garage.find(g=>String(g.id)===String(a.garageId));
+            if(existing){
+                existing.carId=a.carId;existing.date=(a.date||"").slice(0,10)||localDateInputValue();existing.purchasedPrice=existing.purchasedPrice??finalPrice;existing.totalValue=existing.totalValue??(getCar(a.carId)?.autoshowValue??null);existing.appreciationValue=existing.appreciationValue??(Number.isFinite(finalPrice)&&getCar(a.carId)?.autoshowValue!=null&&finalPrice>getCar(a.carId).autoshowValue?finalPrice-getCar(a.carId).autoshowValue:null);existing.currentPi=a.auctionPi??existing.currentPi??null;existing.stockPi=getCar(a.carId)?.stockPi??existing.stockPi??null;existing.pi=existing.stockPi;existing.piDifference=existing.currentPi!=null&&existing.stockPi!=null?existing.currentPi-existing.stockPi:null;await put("garage",existing);
+            }
+        }else{
+            const stockPi=getCar(a.carId)?.stockPi??null;
+            const autoshow=getCar(a.carId)?.autoshowValue??null;const g={carId:a.carId,date:(a.date||"").slice(0,10)||localDateInputValue(),pi:stockPi,stockPi,currentPi:a.auctionPi??null,piDifference:null,purchasedPrice:finalPrice,totalValue:null,partsValue:null,appreciationValue:autoshow!=null&&finalPrice>autoshow?finalPrice-autoshow:null};
+            a.garageId=await put("garage",g);
+        }
+    }
+    await put("auctions",a);
+    auctions=await getAll("auctions");
+    garage=await getAll("garage");
+    closeBuyoutModal();
+    renderGarage();renderAuctions();updateDashboard();
+}
+
+let auctionSaveInProgress=false;
+async function saveAuction(e){
+    e.preventDefault();
+    selectCarFromCombo("auctionCarSearch","auctionCar","auctionCarList");
+    if(!document.getElementById("auctionCar").value){alert("Please select a vehicle.");return;}
+    if(auctionSaveInProgress)return;
+    auctionSaveInProgress=true;
+    const submitButton=document.querySelector("#auctionForm button[type=\"submit\"]");
+    if(submitButton)submitButton.disabled=true;
+    try{
+    const id=document.getElementById("auctionId").value;const existingAuction=id?auctions.find(a=>String(a.id)===String(id)):null;const base={};if(id)base.id=Number(id);if(existingAuction?.garageId)base.garageId=existingAuction.garageId;
+    base.carId=document.getElementById("auctionCar").value;base.date=document.getElementById("auctionDate").value;
+    base.startingBid=numOrNull("startingBid");base.highestBid=numOrNull("highestBid");base.winningBid=numOrNull("winningBid");base.buyout=numOrNull("buyout");
+    base.auctionPi=numOrNull("auctionPi");updateAuctionUpgradeStatus();base.upgraded=document.getElementById("upgraded").value;
+    const selectedOutcome=document.getElementById("outcome").value;
+    const timerSeconds=auctionTimerSecondsFromInputs();base.timerEndsAt=timerSeconds?Date.now()+timerSeconds*1000:null;
+    base.outcome=selectedOutcome||"Active";
+    if(base.outcome==="Buyout Sold"&&base.winningBid==null&&base.buyout!=null)base.winningBid=base.buyout;
+    base.buyer=document.getElementById("auctionBuyer").value||"";
+    base.notes=document.getElementById("auctionNotes").value.trim();
+    const count=id?1:Math.max(1,Math.min(100,parseInt(document.getElementById("auctionDuplicateCount").value,10)||1));
+    for(let i=0;i<count;i++){
+        const record={...base};
+        if(!id)delete record.id;
+        const savedAuctionId=await put("auctions",record);
+        if(!record.id)record.id=savedAuctionId;
+        const finalPrice=record.winningBid!=null&&Number.isFinite(Number(record.winningBid))?Number(record.winningBid):null;
+        if(record.buyer==="me"&&finalPrice!=null&&(record.outcome==="Sold"||record.outcome==="Buyout Sold")){
+            if(record.garageId){
+                const existing=garage.find(g=>String(g.id)===String(record.garageId));
+                if(existing){
+                    existing.carId=record.carId;existing.date=(record.date||"").slice(0,10)||localDateInputValue();existing.purchasedPrice=existing.purchasedPrice??finalPrice;existing.totalValue=existing.totalValue??(getCar(record.carId)?.autoshowValue??null);existing.appreciationValue=existing.appreciationValue??(Number.isFinite(finalPrice)&&getCar(record.carId)?.autoshowValue!=null&&finalPrice>getCar(record.carId).autoshowValue?finalPrice-getCar(record.carId).autoshowValue:null);existing.currentPi=record.auctionPi??existing.currentPi??null;existing.stockPi=getCar(record.carId)?.stockPi??existing.stockPi??null;existing.pi=existing.stockPi;existing.piDifference=existing.currentPi!=null&&existing.stockPi!=null?existing.currentPi-existing.stockPi:null;await put("garage",existing)}
+            }else{
+                const autoshow=getCar(record.carId)?.autoshowValue??null;const g={carId:record.carId,date:(record.date||"").slice(0,10)||localDateInputValue(),pi:getCar(record.carId)?.stockPi??null,stockPi:getCar(record.carId)?.stockPi??null,currentPi:record.auctionPi??null,piDifference:null,purchasedPrice:finalPrice,totalValue:null,partsValue:null,appreciationValue:autoshow!=null&&finalPrice>autoshow?finalPrice-autoshow:null};
+                const garageId=await put("garage",g);
+                record.garageId=garageId;
+                await put("auctions",record);
+            }
+        }
+    }
+    auctions=await getAll("auctions");garage=await getAll("garage");closeModal();renderGarage();renderAuctions();updateDashboard()
+
+    }finally{
+        auctionSaveInProgress=false;
+        if(submitButton)submitButton.disabled=false;
+        document.getElementById("auctionDuplicateCount").value="1";
+    }
+}
+function numOrNull(id){const v=document.getElementById(id).value;return v===""?null:Number(v)}
+function updateDashboard(){
+    document.getElementById("dashCars").textContent=cars.length;document.getElementById("dashAuctions").textContent=auctions.length;document.getElementById("dashSold").textContent=auctions.filter(a=>a.winningBid!=null).length;document.getElementById("dashCovered").textContent=new Set(auctions.map(a=>a.carId)).size;const unknown=document.getElementById("dashUnknown");if(unknown)unknown.textContent=auctions.filter(a=>a.winningBid==null).length;
+    const groups=new Map();auctions.forEach(a=>{if(a.winningBid==null)return;const c=getCar(a.carId);if(!c)return;if(!groups.has(a.carId))groups.set(a.carId,[]);groups.get(a.carId).push(a)});
+    const body=document.getElementById("summaryBody");body.innerHTML=[...groups.entries()].map(([id,list])=>{const c=getCar(id);const avg=list.reduce((s,a)=>s+a.winningBid,0)/list.length;const pis=list.filter(a=>a.auctionPi!=null);const avgPi=pis.length?pis.reduce((s,a)=>s+a.auctionPi,0)/pis.length:null;const avgDelta=pis.length?avgPi-c.stockPi:null;return `<tr><td><strong>${escapeHtml(c.name)}</strong><small>${c.year}</small></td><td class="garage-value">${money(c.autoshowValue??c.autoshow_value)}</td><td>${list.length}</td><td>${money(Math.round(avg))}</td><td>${piMarkup(c.stockPi)}</td><td>${avgPi==null?"—":piMarkup(Math.round(avgPi))}</td><td>${avgDelta==null?"—":signed(Math.round(avgDelta))}</td></tr>`}).join("");
+}
+function checklistRecord(carId){return checklist.find(x=>String(x.carId)===String(carId))||null}
+function ownedState(carId){const rec=checklistRecord(carId);if(rec&&rec.ownedOverride!==null&&rec.ownedOverride!==undefined)return {owned:!!rec.ownedOverride,manual:true};return {owned:garageCountForCar(carId)>0,manual:false}}
+function checklistSort(a,b){const rank={High:1,Medium:2,Low:3};const pa=rank[a.priority]||999;const pb=rank[b.priority]||999;if(pa!==pb)return pa-pb;const na=(a.name||"").localeCompare(b.name||"",undefined,{numeric:true,sensitivity:"base"});return na||Number(a.year||0)-Number(b.year||0)}
+function renderChecklist(){const body=document.getElementById("checklistBody"),q=tokens(document.getElementById("checklistSearch").value),view=document.getElementById("checklistView").value;const list=cars.filter(c=>isCarActionable(c)).filter(c=>{const rec=checklistRecord(c.id)||{},state=ownedState(c.id),text=`${c.name||""} ${c.year||""} ${c.rarity||""} ${c.unlockMethod||""}`.toLowerCase();if(!q.every(t=>text.includes(t)))return false;if(view==="hunt")return !!rec.need;if(view==="notOwned")return !!rec.need&&!state.owned;if(view==="owned")return state.owned;if(view==="neededOwned")return !!rec.need&&state.owned;return true}).sort((a,b)=>{const ra=checklistRecord(a.id)||{},rb=checklistRecord(b.id)||{};return checklistSort({...a,priority:ra.priority},{...b,priority:rb.priority})});body.innerHTML=list.map(c=>{const rec=checklistRecord(c.id)||{},state=ownedState(c.id),priority=["High","Medium","Low"].includes(rec.priority)?rec.priority:"";return `<tr class="checklist-row" data-id="${escapeHtml(c.id)}"><td><select class="priority-input" data-id="${escapeHtml(c.id)}" aria-label="Priority for ${escapeHtml(c.name)}"><option value="">—</option><option value="High" ${priority==="High"?"selected":""}>High</option><option value="Medium" ${priority==="Medium"?"selected":""}>Medium</option><option value="Low" ${priority==="Low"?"selected":""}>Low</option></select></td><td><input class="check-toggle need-toggle" data-id="${escapeHtml(c.id)}" type="checkbox" ${rec.need?"checked":""} aria-label="Need ${escapeHtml(c.name)}"></td><td><input class="check-toggle owned-toggle" data-id="${escapeHtml(c.id)}" type="checkbox" ${state.owned?"checked":""} aria-label="Owned ${escapeHtml(c.name)}"><span class="owned-note">${state.manual?"Manual":"Garage"}</span></td><td class="vehicle-cell"><strong>${escapeHtml(c.name||"Unknown")}</strong><small>${c.year||""}</small></td><td>${escapeHtml(c.rarity||"—")}</td><td class="checklist-price">${money(c.autoshowValue)}</td><td class="source-cell">${escapeHtml(c.unlockMethod||"—")}</td><td><a class="source-link" href="${escapeHtml(c.sourceUrl||"#")}" target="_blank" rel="noopener" title="Open Fandom reference">↗</a></td></tr>`}).join("");document.getElementById("checklistEmpty").style.display=list.length?"none":"block";const badge=document.getElementById("checklistBadge");if(badge)badge.textContent=cars.filter(c=>isCarActionable(c)&&(checklistRecord(c.id)||{}).need).length}
+async function saveChecklistRecord(carId,patch){let rec=checklistRecord(carId);if(!rec){rec={carId,priority:null,need:false,ownedOverride:null}}Object.keys(patch).forEach(k=>{if(patch[k]!==undefined)rec[k]=patch[k]});await put("checklist",rec);checklist=await getAll("checklist");markDatabaseChanged();renderChecklist()}
+async function exportDb(){await ensureDb();const exportedAt=new Date().toISOString();const cfg=getActiveDatabaseConfig();const games={};for(const game of Object.keys(DATABASE_CONFIGS)){games[game]={auctions:(await getAllGames("auctions")).filter(x=>String(x.game||"")===game),garage:(await getAllGames("garage")).filter(x=>String(x.game||"")===game),myAuctions:(await getAllGames("myAuctions")).filter(x=>String(x.game||"")===game),checklist:(await getAllGames("checklist")).filter(x=>String(x.game||"")===game)}}const payload={version:880,exportedAt,database:DB_NAME,activeGame,gameName:cfg.game,carDatabaseVersion:cfg.dbVersion,games};localStorage.setItem("FH4_Car_Database_lastBackupAt",exportedAt);localStorage.setItem("FH4_Car_Database_lastDataChangeAt",exportedAt);updateBackupStatus(exportedAt);updateAboutBackupStatus();const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="Forza_Horizon_Car_Database_Backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function markDatabaseChanged(){const now=new Date().toISOString();localStorage.setItem("FH4_Car_Database_lastDataChangeAt",now)}
+function updateAboutBackupStatus(){const el=document.getElementById("aboutBackupStatus");if(el)el.textContent=document.getElementById("backupStatus")?.textContent||"Last backup: Never"}
+function showAboutModal(force=false){const modal=document.getElementById("aboutModal");if(!modal)return;if(!force&&localStorage.getItem("FH4_Car_Database_hideAbout")==="1")return;updateAboutBackupStatus();modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal)}
+function closeAboutModal(){const modal=document.getElementById("aboutModal");if(!modal)return;const check=document.getElementById("dontShowAbout");if(check?.checked)localStorage.setItem("FH4_Car_Database_hideAbout","1");modal.classList.remove("show");modal.setAttribute("aria-hidden","true")}
+function updateCarDbModalInfo(selectedGame=activeGame){
+    const game=DATABASE_CONFIGS[selectedGame]||DATABASE_CONFIGS.FH4;
+    const staticCars=window[game.globalName]||[];
+    const sel=document.getElementById("carDbGameSelect");if(sel)sel.value=selectedGame;
+    const gameEl=document.getElementById("carDbInfoGame");if(gameEl)gameEl.textContent=game.game;
+    const nameEl=document.getElementById("carDbInfoName");if(nameEl)nameEl.textContent=`${game.game} Car Database`;
+    const ver=document.getElementById("carDbInfoVersion");if(ver)ver.textContent=`v${game.dbVersion}`;
+    const count=document.getElementById("carDbInfoCount");if(count)count.textContent=staticCars.length;
+    const unob=document.getElementById("carDbInfoUnobtainable");if(unob)unob.textContent=staticCars.filter(c=>String(c.availability||"").toLowerCase()==="unobtainable").length;
+    const file=document.getElementById("carDbInfoFile");if(file)file.textContent=game.file;
+    const source=document.getElementById("carDbInfoSource");if(source){source.href=game.source;source.textContent=game.sourceLabel}
+    const snap=document.getElementById("carDbInfoSnapshot");if(snap)snap.textContent=game.snapshot;
+    const app=document.getElementById("carDbInfoAppVersion");if(app)app.textContent=APP_VERSION;
+    const backup=document.getElementById("carDbSwitchBackupStatus");if(backup)backup.textContent=document.getElementById("backupStatus")?.textContent||"Last backup: Never";
+}
+function showCarDbModal(){const modal=document.getElementById("carDbModal");if(!modal)return;updateCarDbModalInfo(activeGame);modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal)}
+async function switchCarDatabase(){
+    const selected=document.getElementById("carDbGameSelect")?.value;
+    if(!selected||selected===activeGame){closeCarDbModal();return}
+    try{
+        activeGame=selected;
+        localStorage.setItem(ACTIVE_GAME_KEY,activeGame);
+        await syncStaticCars();
+        cars=await getAll("cars");auctions=await getAll("auctions");garage=await getAll("garage");myAuctions=await getAll("myAuctions");checklist=await getAll("checklist");
+        location.reload();
+    }catch(err){alert("Could not switch the car database: "+err.message)}
+}
+function closeCarDbModal(){const modal=document.getElementById("carDbModal");if(!modal)return;modal.classList.remove("show");modal.setAttribute("aria-hidden","true")}
+function calendarDaysAgo(savedAt){const saved=new Date(savedAt),now=new Date();if(!Number.isFinite(saved.getTime()))return null;const savedDay=Date.UTC(saved.getFullYear(),saved.getMonth(),saved.getDate());const nowDay=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());return Math.max(0,Math.floor((nowDay-savedDay)/86400000))}
+function updateBackupStatus(savedAt){const el=document.getElementById("backupStatus");if(!el)return;if(!savedAt){el.textContent="Last backup: Never";el.classList.remove("backup-due");return}const saved=new Date(savedAt);if(!Number.isFinite(saved.getTime())){el.textContent="Last backup: Unknown";el.classList.remove("backup-due");return}const days=calendarDaysAgo(savedAt);const date=saved.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});el.textContent=`Last backup: ${date} · ${days} ${days===1?"day":"days"} ago`;el.classList.toggle("backup-due",days>=5);const about=document.getElementById("aboutBackupStatus");if(about)about.textContent=el.textContent;const reset=document.getElementById("resetBackupStatus");if(reset)reset.textContent=el.textContent}
+function openResetModal(){const modal=document.getElementById("resetModal");if(!modal)return;updateBackupStatus(localStorage.getItem("FH4_Car_Database_lastBackupAt"));const input=document.getElementById("resetConfirmInput"),proceed=document.getElementById("proceedReset");input.value="";proceed.disabled=true;modal.classList.add("show");modal.setAttribute("aria-hidden","false");resetModalScroll(modal);setTimeout(()=>input.focus(),50)}
+function closeResetModal(){const modal=document.getElementById("resetModal");if(!modal)return;modal.classList.remove("show");modal.setAttribute("aria-hidden","true")}
+async function resetDatabase(){
+    const typed=document.getElementById("resetConfirmInput").value;
+    if(typed!=="DELETE")return;
+    const proceed=document.getElementById("proceedReset");
+    proceed.disabled=true;proceed.textContent="RESETTING...";
+    try{
+        await clearActiveGameData();
+        const staticCars=getStaticCars();
+        for(const c of staticCars)await put("cars",{...c});
+        localStorage.removeItem("FH4_Car_Database_lastBackupAt");localStorage.removeItem("FH4_Car_Database_lastDataChangeAt");
+        location.reload();
+    }catch(err){
+        console.error("Game data reset failed:",err);proceed.disabled=false;proceed.textContent="RESET";alert("Could not reset this game's data: "+(err?.message||String(err)));
+    }
+}
+async function importDbFile(file){await ensureDb();const text=await file.text(),payload=JSON.parse(text);const backupAt=payload.exportedAt?new Date(payload.exportedAt):null;const lastChangeAtRaw=localStorage.getItem("FH4_Car_Database_lastDataChangeAt");const lastChangeAt=lastChangeAtRaw?new Date(lastChangeAtRaw):null;if(backupAt&&Number.isFinite(backupAt.getTime())&&lastChangeAt&&Number.isFinite(lastChangeAt.getTime())&&lastChangeAt>backupAt){const backupDate=backupAt.toLocaleString(undefined,{year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});const changeDate=lastChangeAt.toLocaleString(undefined,{year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});if(!confirm(`This backup is from ${backupDate}.\n\nYour current database contains changes recorded after that backup (${changeDate}).\n\nImporting will replace all three games' personal data with the contents of this backup.\n\nAre you sure you want to continue?`))return}
+const isMultiGame=payload.games&&typeof payload.games==="object";
+if(isMultiGame){
+    // Current multi-game backups replace the complete personal-data set.
+    for(const store of PERSONAL_STORES)await clearStore(store);
+    for(const game of Object.keys(DATABASE_CONFIGS)){const data=payload.games[game]||{};for(const raw of data.auctions||[])await put("auctions",{...raw,game});for(const raw of data.garage||[])await put("garage",{...raw,game});for(const raw of data.myAuctions||[])await put("myAuctions",{...raw,game});for(const raw of data.checklist||[])await put("checklist",{...raw,game})}
+}else if(Array.isArray(payload.auctions)||Array.isArray(payload.garage)||Array.isArray(payload.myAuctions)||Array.isArray(payload.checklist)){
+    // Backward-compatible import for v0.87 and earlier single-game backups.
+    const legacyGame=DATABASE_CONFIGS[payload.game]?payload.game:inferGameFromLegacyData(payload);
+    await clearPersonalGame("auctions",legacyGame);
+    await clearPersonalGame("garage",legacyGame);
+    await clearPersonalGame("myAuctions",legacyGame);
+    await clearPersonalGame("checklist",legacyGame);
+    for(const raw of payload.auctions||[])await put("auctions",{...raw,game:legacyGame});
+    for(const raw of payload.garage||[])await put("garage",{...raw,game:legacyGame});
+    for(const raw of payload.myAuctions||[])await put("myAuctions",{...raw,game:legacyGame});
+    for(const raw of payload.checklist||[])await put("checklist",{...raw,game:legacyGame});
+}else throw new Error("This backup file is not recognized. Please choose a Forza Horizon database backup.");
+await clearPersonalGame("cars",activeGame);
+for(const c of getStaticCars())await put("cars",{...c});
+cars=await getAll("cars");await syncStaticCars();auctions=await getAll("auctions");garage=await getAll("garage");myAuctions=await getAll("myAuctions");checklist=await getAll("checklist");await normalizeChecklistPriorities();await normalizeExpiredMyAuctions();await migrateGarageValues();populateCarSelect();populateGarageCarSelect();populateMyAuctionCarSelect();renderCarTable();renderGarage();renderAuctions();renderMyAuctions();renderChecklist();updateDashboard();const importedAt=new Date().toISOString();localStorage.setItem("FH4_Car_Database_lastBackupAt",importedAt);localStorage.setItem("FH4_Car_Database_lastDataChangeAt",importedAt);updateBackupStatus(importedAt);updateAboutBackupStatus()}
+async function migrateGarageValues(){
+    // Repair older auction records that were marked as won by the user but never
+    // received a Garage link, and restore buyer="me" when a Garage link already exists.
+    garage=await getAll("garage");
+    auctions=await getAll("auctions");
+    let changed=false;
+    for(const a of auctions){
+        const finalPrice=Number(a.winningBid);
+        const validFinal=Number.isFinite(finalPrice);
+        const terminal=a.outcome==="Sold"||a.outcome==="Buyout Sold";
+        if(a.garageId){
+            const linked=garage.find(g=>String(g.id)===String(a.garageId));
+            if(linked&&a.buyer!=="me"){a.buyer="me";await put("auctions",a);changed=true}
+            continue;
+        }
+        if(a.buyer!=="me"||!validFinal||!terminal)continue;
+        const c=getCar(a.carId)||{};
+        const date=(a.date||"").slice(0,10)||localDateInputValue();
+        let g=garage.find(x=>String(x.carId)===String(a.carId)&&String(x.date||"").slice(0,10)===date&&Number(x.purchasedPrice)===finalPrice);
+        if(!g){
+            const autoshow=c.autoshowValue??null;
+            g={carId:a.carId,date,pi:c.stockPi??null,stockPi:c.stockPi??null,currentPi:a.auctionPi??null,piDifference:a.auctionPi!=null&&c.stockPi!=null?Number(a.auctionPi)-Number(c.stockPi):null,purchasedPrice:finalPrice,totalValue:null,partsValue:null,appreciationValue:autoshow!=null&&finalPrice>autoshow?finalPrice-autoshow:null};
+            g.id=await put("garage",g);
+            garage.push(g);
+        }
+        a.garageId=g.id;
+        await put("auctions",a);
+        changed=true;
+    }
+    // Keep the existing Garage-value migration for linked records.
+    for(const g of garage){
+        const c=getCar(g.carId);if(!c)continue;
+        const linked=auctions.find(a=>String(a.garageId)===String(g.id));
+        let gChanged=false;
+        if(linked&&g.purchasedPrice==null&&Number.isFinite(Number(linked.winningBid))){g.purchasedPrice=Number(linked.winningBid);gChanged=true}
+        if(linked&&g.appreciationValue==null&&Number.isFinite(Number(linked.winningBid))&&c.autoshowValue!=null&&Number(linked.winningBid)>Number(c.autoshowValue)){g.appreciationValue=Number(linked.winningBid)-Number(c.autoshowValue);gChanged=true}
+        if(gChanged){await put("garage",g);changed=true}
+    }
+    if(changed){garage=await getAll("garage");auctions=await getAll("auctions")}
+}
+
+
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("tab-"+btn.dataset.tab).classList.add("active");if(btn.dataset.tab==="dashboard")updateDashboard();if(btn.dataset.tab==="garage")renderGarage();if(btn.dataset.tab==="myAuctions")renderMyAuctions();if(btn.dataset.tab==="checklist")renderChecklist()}));
+document.getElementById("addAuction").addEventListener("click",()=>openModal());document.getElementById("addGarageQuick").addEventListener("click",()=>openGarageModal());document.getElementById("closeModal").addEventListener("click",closeModal);document.getElementById("cancelAuction").addEventListener("click",closeModal);document.getElementById("auctionForm").addEventListener("submit",saveAuction);document.getElementById("auctionCarSearch").addEventListener("input",()=>{refreshCarComboList("auctionCarSearch","auctionCarList");selectCarFromCombo("auctionCarSearch","auctionCar","auctionCarList");refreshAuctionCarFields()});document.getElementById("outcome").addEventListener("change",()=>{document.getElementById("outcome").dataset.manual="true";});document.querySelectorAll("[data-auction-seconds]").forEach(btn=>btn.addEventListener("click",()=>setAuctionTimerInputs(Number(btn.dataset.auctionSeconds))));["auctionTimerHours","auctionTimerMinutes","auctionTimerSeconds"].forEach(id=>document.getElementById(id).addEventListener("input",updateAuctionTimerDisplay));["winningBid","buyout","highestBid"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{autoSetOutcome();updateLiveCalc()}));document.getElementById("auctionPi").addEventListener("input",updateLiveCalc);document.getElementById("auctionSearch").addEventListener("input",renderAuctions);document.getElementById("auctionOutcome").addEventListener("change",renderAuctions);document.getElementById("auctionViewLive").addEventListener("click",()=>{auctionViewMode="live";document.getElementById("auctionViewLive").classList.add("active");document.getElementById("auctionViewCompleted").classList.remove("active");document.getElementById("auctionViewLive").setAttribute("aria-selected","true");document.getElementById("auctionViewCompleted").setAttribute("aria-selected","false");renderAuctions()});document.getElementById("auctionViewCompleted").addEventListener("click",()=>{auctionViewMode="completed";document.getElementById("auctionViewCompleted").classList.add("active");document.getElementById("auctionViewLive").classList.remove("active");document.getElementById("auctionViewCompleted").setAttribute("aria-selected","true");document.getElementById("auctionViewLive").setAttribute("aria-selected","false");renderAuctions()});document.getElementById("auctionSnapshotHeader").addEventListener("click",()=>{const el=document.getElementById("auctionSnapshot"),header=document.getElementById("auctionSnapshotHeader"),collapsed=el.classList.toggle("collapsed");header.setAttribute("aria-expanded",String(!collapsed))});document.querySelectorAll("#auctionSnapshotTable th[data-snapshot-sort]").forEach(th=>th.addEventListener("click",()=>sortMarketSnapshot(th.dataset.snapshotSort)));document.getElementById("checklistSearch").addEventListener("input",renderChecklist);document.getElementById("checklistView").addEventListener("change",renderChecklist);document.getElementById("carTable").addEventListener("change",async e=>{const el=e.target,id=el.dataset.id;if(!id)return;let rec=checklistRecord(id);if(!rec)rec={carId:id,priority:null,need:false,ownedOverride:null};if(el.classList.contains("car-need-toggle")){rec.need=el.checked;if(!el.checked)rec.priority=null;await put("checklist",rec)}else if(el.classList.contains("car-owned-toggle")){rec.ownedOverride=el.checked?true:null;await put("checklist",rec)}else if(el.classList.contains("car-priority-input")){rec.priority=["High","Medium","Low"].includes(el.value)?el.value:null;await put("checklist",rec)}checklist=await getAll("checklist");renderCarTable();renderChecklist();});document.getElementById("checklistBody").addEventListener("change",async e=>{const el=e.target,id=el.dataset.id;if(!id)return;if(el.classList.contains("need-toggle")){await saveChecklistRecord(id,{need:el.checked,priority:el.checked?undefined:null});return}if(el.classList.contains("owned-toggle")){await saveChecklistRecord(id,{ownedOverride:el.checked?true:null});return}if(el.classList.contains("priority-input")){await saveChecklistRecord(id,{priority:["High","Medium","Low"].includes(el.value)?el.value:null});return}});
+document.getElementById("carEditForm").addEventListener("submit",saveCarEdit);document.getElementById("closeCarEditModal").addEventListener("click",closeCarEditModal);document.getElementById("cancelCarEdit").addEventListener("click",closeCarEditModal);document.getElementById("carEditModal").addEventListener("click",e=>{if(e.target.id==="carEditModal")closeCarEditModal()});document.getElementById("carTable").addEventListener("click",e=>{const btn=e.target.closest(".edit-car-btn");if(!btn)return;e.stopPropagation();const c=getCar(btn.dataset.id);if(c)openCarEditModal(c)});
+document.querySelectorAll(".game-choice").forEach(btn=>btn.classList.toggle("active",btn.dataset.game===activeGame));
+document.querySelectorAll(".game-choice:not(:disabled)").forEach(btn=>btn.addEventListener("click",()=>{const selected=btn.dataset.game;if(selected===activeGame)return;const sel=document.getElementById("carDbGameSelect");if(sel){sel.value=selected;updateCarDbModalInfo(selected);showCarDbModal()}}));
+document.getElementById("dbStatus").addEventListener("click",e=>{const part=e.target.closest("[data-status-part]")?.dataset.statusPart;if(part==="app")showAboutModal(true);else if(part==="db"||part==="cars")showCarDbModal()});document.getElementById("carDbGameSelect").addEventListener("change",e=>updateCarDbModalInfo(e.target.value));document.getElementById("switchCarDb").addEventListener("click",switchCarDatabase);document.getElementById("carDbSwitchBackup").addEventListener("click",exportDb);document.getElementById("closeCarDb").addEventListener("click",closeCarDbModal);document.getElementById("closeCarDbModal").addEventListener("click",closeCarDbModal);document.getElementById("carDbModal").addEventListener("click",e=>{if(e.target.id==="carDbModal")closeCarDbModal()});document.getElementById("closeAbout").addEventListener("click",closeAboutModal);document.getElementById("closeAboutModal").addEventListener("click",closeAboutModal);document.getElementById("aboutModal").addEventListener("click",e=>{if(e.target.id==="aboutModal")closeAboutModal()});
+document.getElementById("exportDb").addEventListener("click",exportDb);document.getElementById("importDb").addEventListener("change",e=>{if(e.target.files[0])importDbFile(e.target.files[0]).catch(err=>alert("Could not import database: "+err.message));e.target.value=""});document.getElementById("resetDb").addEventListener("click",openResetModal);document.getElementById("closeResetModal").addEventListener("click",closeResetModal);document.getElementById("cancelReset").addEventListener("click",closeResetModal);document.getElementById("resetModal").addEventListener("click",e=>{if(e.target.id==="resetModal")closeResetModal()});document.getElementById("resetConfirmInput").addEventListener("input",e=>{document.getElementById("proceedReset").disabled=e.target.value!=="DELETE"});document.getElementById("proceedReset").addEventListener("click",resetDatabase);document.getElementById("resetBackup").addEventListener("click",exportDb);
+document.getElementById("auctionBody").addEventListener("click",async e=>{
+    const year=e.target.closest(".auction-year-group");if(year){const key=year.dataset.year;if(expandedAuctionYears.has(key))expandedAuctionYears.delete(key);else expandedAuctionYears.add(key);renderAuctions();return}
+    const month=e.target.closest(".auction-month-group");if(month){const key=month.dataset.month;if(expandedAuctionMonths.has(key))expandedAuctionMonths.delete(key);else expandedAuctionMonths.add(key);renderAuctions();return}
+    const day=e.target.closest(".auction-day-group");if(day){const key=day.dataset.day;if(expandedAuctionDays.has(key))expandedAuctionDays.delete(key);else expandedAuctionDays.add(key);renderAuctions();return}
+    const buyout=e.target.closest(".buyout-auction");if(buyout){e.stopPropagation();openBuyoutModal(Number(buyout.dataset.id));return}
+    const del=e.target.closest(".delete-auction");if(del){e.stopPropagation();if(confirm("Delete this auction observation?")){const id=Number(del.dataset.id);await new Promise((resolve,reject)=>{const r=tx("auctions","readwrite").delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)});auctions=await getAll("auctions");renderAuctions()}return}
+    const edit=e.target.closest(".edit-auction"),row=e.target.closest(".auction-row"),id=edit?.dataset.id||row?.dataset.id;if(id){const a=auctions.find(x=>String(x.id)===String(id));if(a)openModal(a)}});
+document.getElementById("auctionSnapshotBody").addEventListener("click",e=>{const header=e.target.closest(".snapshot-make-header");if(header){const make=header.dataset.make;if(expandedSnapshotMakes.has(make))expandedSnapshotMakes.delete(make);else expandedSnapshotMakes.add(make);renderAuctions();return}const row=e.target.closest(".snapshot-row");if(!row)return;const c=getCar(row.dataset.carId);if(c){document.getElementById("auctionSearch").value=c.name;document.getElementById("auctionOutcome").value="";renderAuctions();document.getElementById("auctionTable").scrollIntoView({behavior:"smooth",block:"start"})}});
+document.getElementById("auctionModal").addEventListener("click",e=>{if(e.target.id==="auctionModal")closeModal()});document.getElementById("closeBuyoutModal").addEventListener("click",closeBuyoutModal);document.getElementById("cancelBuyout").addEventListener("click",closeBuyoutModal);document.getElementById("confirmBuyout").addEventListener("click",confirmBuyout);document.getElementById("buyoutModal").addEventListener("click",e=>{if(e.target.id==="buyoutModal")closeBuyoutModal()});
+document.getElementById("addMyAuction").addEventListener("click",()=>openMyAuctionModal());document.getElementById("closeMyAuctionModal").addEventListener("click",closeMyAuctionModal);document.getElementById("cancelMyAuction").addEventListener("click",closeMyAuctionModal);document.getElementById("myAuctionForm").addEventListener("submit",saveMyAuction);document.getElementById("myAuctionCarSearch").addEventListener("input",()=>{refreshCarComboList("myAuctionCarSearch","myAuctionCarList");selectCarFromCombo("myAuctionCarSearch","myAuctionCar","myAuctionCarList")});document.getElementById("myAuctionOutcome").addEventListener("change",()=>{if(["Sold","Buyout Sold","Did Not Sell"].includes(document.getElementById("myAuctionOutcome").value))setTimerInputs(0);updateMyAuctionTimerDisplay()});document.querySelectorAll(".timer-presets button").forEach(btn=>btn.addEventListener("click",()=>setTimerInputs(Number(btn.dataset.seconds))));["timerHours","timerMinutes","timerSeconds","myAuctionListedAt"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{updateMyAuctionTimerDisplay();const d=document.getElementById("myAuctionListedAt").value;if(document.getElementById("myAuctionRetentionReminder").checked&&d)updateRetentionDisplay(d)}));document.getElementById("myAuctionRetentionReminder").addEventListener("change",()=>{const d=document.getElementById("myAuctionListedAt").value;if(document.getElementById("myAuctionRetentionReminder").checked&&d)updateRetentionDisplay(d);else document.getElementById("retentionDisplay").textContent="No 60-day reminder set"});document.getElementById("myAuctionSearch").addEventListener("input",renderMyAuctions);document.getElementById("myAuctionStatus").addEventListener("change",renderMyAuctions);document.getElementById("myAuctionBody").addEventListener("click",async e=>{const del=e.target.closest(".delete-my-auction");if(del){e.stopPropagation();if(confirm("Delete this personal auction record?")){await new Promise((resolve,reject)=>{const r=tx("myAuctions","readwrite").delete(Number(del.dataset.id));r.onsuccess=resolve;r.onerror=()=>reject(r.error)});myAuctions=await getAll("myAuctions");renderMyAuctions()}return}const relist=e.target.closest(".relist-my-auction");if(relist){e.stopPropagation();await relistMyAuction(relist.dataset.id);return}const edit=e.target.closest(".edit-my-auction"),row=e.target.closest(".my-auction-row"),id=edit?.dataset.id||row?.dataset.id;if(id){const a=myAuctions.find(x=>String(x.id)===String(id));if(a)openMyAuctionModal(a)}});document.getElementById("myAuctionModal").addEventListener("click",e=>{if(e.target.id==="myAuctionModal")closeMyAuctionModal()});
+document.getElementById("addGarage").addEventListener("click",()=>openGarageModal());document.getElementById("closeGarageModal").addEventListener("click",closeGarageModal);document.getElementById("cancelGarage").addEventListener("click",closeGarageModal);document.getElementById("garageForm").addEventListener("submit",saveGarage);document.getElementById("garageCarSearch").addEventListener("input",()=>{filterCarOptions("garageCarSearch","garageCar");updateGarageCarTypeDisplay()});document.getElementById("garageCar").addEventListener("change",()=>{updateGarageCarTypeDisplay();updateGarageCalc()});document.getElementById("garageCurrentPi").addEventListener("input",()=>{updateGaragePiClass();updateGarageTargetStatus()});document.getElementById("garageTargetPi").addEventListener("input",updateGarageTargetStatus);["garagePurchased","garageTotal","garageParts","garageAppreciation"].forEach(id=>document.getElementById(id).addEventListener("input",updateGarageCalc));document.getElementById("garageSearch").addEventListener("input",renderGarage);document.getElementById("garageCarTypeFilter").addEventListener("change",renderGarage);document.getElementById("garageBody").addEventListener("click",e=>{const header=e.target.closest(".garage-make-header");if(!header)return;const make=header.dataset.make;if(expandedGarageMakes.has(make))expandedGarageMakes.delete(make);else expandedGarageMakes.add(make);renderGarage()});document.getElementById("garageBody").addEventListener("click",async e=>{const del=e.target.closest(".delete-garage");if(del){e.stopPropagation();if(confirm("Delete this garage record?")){const id=Number(del.dataset.id);await new Promise((resolve,reject)=>{const r=tx("garage","readwrite").delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)});garage=await getAll("garage");renderGarage();renderAuctions();}return}const edit=e.target.closest(".edit-garage"),row=e.target.closest(".garage-row"),id=edit?.dataset.id||row?.dataset.id;if(id){const g=garage.find(x=>String(x.id)===String(id));if(g)openGarageModal(g)}});document.getElementById("garageModal").addEventListener("click",e=>{if(e.target.id==="garageModal")closeGarageModal()});
+
+setInterval(async()=>{if(document.getElementById("myAuctionModal").classList.contains("show"))updateMyAuctionTimerDisplay();if(document.getElementById("auctionModal").classList.contains("show"))updateAuctionTimerDisplay();renderAuctions();await normalizeExpiredMyAuctions();renderMyAuctions()},1000);
+function showDatabaseRecovery(err,stage){
+    const el=document.getElementById("dbStatus");
+    if(!el)return;
+    const cfg=getActiveDatabaseConfig();
+    const name=err?.name||"UnknownError";
+    const message=err?.message||String(err||"Unknown database error");
+    const safe=escapeHtml(message);
+    const safeName=escapeHtml(name);
+    const safeStage=escapeHtml(stage||"startup");
+    el.innerHTML=`<span class="status-chip">Database error</span>
+    <span class="status-separator">·</span>
+    <span class="status-chip">${escapeHtml(cfg.game)}</span>
+    <div style="margin-top:8px;font-size:11px;color:#9a1f1f;line-height:1.45;white-space:normal">
+    <strong>${safeName}</strong> during ${safeStage}: ${safe}
+    </div>
+    <div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">
+    <button type="button" class="small-btn" id="recoverFH6">Start as FH6</button>
+    <button type="button" class="small-btn" id="recoverFH4">Start as FH4</button>
+    <button type="button" class="small-btn" id="recoverFH5">Start as FH5</button>
+    <button type="button" class="small-btn" id="repairCarStore">Repair Car Data</button>
+    <button type="button" class="small-btn" id="deleteAndStartFH6">Fresh FH6 Database</button>
+    </div>`;
+    const setGame=game=>{localStorage.setItem(ACTIVE_GAME_KEY,game);location.reload()};
+    document.getElementById("recoverFH6")?.addEventListener("click",()=>setGame("FH6"));
+    document.getElementById("recoverFH4")?.addEventListener("click",()=>setGame("FH4"));
+    document.getElementById("recoverFH5")?.addEventListener("click",()=>setGame("FH5"));
+    document.getElementById("repairCarStore")?.addEventListener("click",async()=>{
+        const btn=document.getElementById("repairCarStore");
+        if(btn)btn.disabled=true;
+        try{
+            await ensureDb();
+            activeGame=localStorage.getItem(ACTIVE_GAME_KEY)||"FH6";
+            await clearPersonalGame("cars",activeGame);
+            if(!DATABASE_CONFIGS[activeGame])activeGame="FH6";
+            localStorage.setItem(ACTIVE_GAME_KEY,activeGame);
+            const staticCars=getStaticCars();
+            if(!staticCars.length)throw new Error(`No static car data loaded for ${activeGame}.`);
+            for(const c of staticCars)await put("cars",{...c});
+            location.reload();
+        }catch(repairErr){
+            console.error("Car store repair failed:",repairErr);
+            showDatabaseRecovery(repairErr,"car-store repair");
+        }
+    });
+    document.getElementById("deleteAndStartFH6")?.addEventListener("click",async()=>{
+        if(!confirm("This will permanently delete FH6 Garage, Auction Data, My Auctions, and Checklist records only. FH4 and FH5 data will remain untouched. Continue?"))return;
+        const btn=document.getElementById("deleteAndStartFH6");
+        if(btn)btn.disabled=true;
+        try{
+            activeGame="FH6";
+            localStorage.setItem(ACTIVE_GAME_KEY,"FH6");
+            await clearActiveGameData();
+            const staticCars=getStaticCars();
+            for(const c of staticCars)await put("cars",{...c});
+            location.reload();
+        }catch(deleteErr){
+            console.error("Fresh FH6 reset failed:",deleteErr);
+            showDatabaseRecovery(deleteErr,"fresh FH6 reset");
+        }
+    });
+}
+
+(async function init(){
+    let stage="opening database";
+    try{
+        await openDb();
+        stage="legacy migration";
+        await migrateLegacyDatabase();
+        stage="reading car data";
+        cars=await getAll("cars");
+        stage=`syncing ${activeGame} static car data`;
+        await syncStaticCars();
+        stage=`migrating ${activeGame} car IDs`;
+        await migrateFH4CarIds();
+        stage="reading personal records";
+        auctions=await getAll("auctions");
+        garage=await getAll("garage");
+        myAuctions=await getAll("myAuctions");
+        checklist=await getAll("checklist");
+        stage="normalizing checklist";
+        await normalizeChecklistPriorities();
+        stage="normalizing My Auctions";
+        await normalizeExpiredMyAuctions();
+        stage="migrating Garage values";
+        await migrateGarageValues();
+        stage="normalizing Auction Data";
+        auctions=auctions.map(a=>{if(a.winningBid==null&&a.sold!=null){a.winningBid=a.sold;delete a.sold}if(a.outcome==="Bought at Buyout")a.outcome="Buyout Sold";return a});
+        for(const a of auctions)await put("auctions",a);
+        stage="rendering application";
+        populateCarSelect();populateGarageCarSelect();populateMyAuctionCarSelect();renderCarTable();renderGarage();renderAuctions();renderMyAuctions();renderChecklist();updateDashboard();renderDbStatus();updateBackupStatus(localStorage.getItem("FH4_Car_Database_lastBackupAt"));setTimeout(()=>showAboutModal(false),150)
+    }catch(err){
+        console.error("Database startup failure:",stage,err);
+        showDatabaseRecovery(err,stage);
+    }
+})();
+})();
+</script>
+<script>
+(function(){
+    function setupPatchNoteRows(){
+        document.querySelectorAll(".patch-version-grid").forEach(function(grid){
+            if(grid.dataset.rowsReady === "true") return;
+            var versions=Array.from(grid.querySelectorAll(":scope > .patch-version"));
+            if(!versions.length) return;
+            for(var i=0;i<versions.length;i+=3){
+                var row=document.createElement("div");
+                row.className="patch-version-row";
+                versions.slice(i,i+3).forEach(function(version){ row.appendChild(version); });
+                grid.appendChild(row);
+            }
+            grid.dataset.rowsReady="true";
+            grid.querySelectorAll(".patch-version").forEach(function(version){
+                var summary=version.querySelector(":scope > summary");
+                if(!summary) return;
+                summary.addEventListener("click",function(event){
+                    event.preventDefault();
+                    var row=version.parentElement;
+                    var alreadyOpen=version.open && version.classList.contains("selected");
+                    row.querySelectorAll(":scope > .patch-version").forEach(function(item){
+                        item.open=!alreadyOpen;
+                        item.classList.toggle("selected",!alreadyOpen && item===version);
+                    });
+                });
+            });
+        });
+    }
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded",setupPatchNoteRows);
+    else setupPatchNoteRows();
+})();
+</script>
+</body>
+</html>
